@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import { Section } from "@/components/ui/section";
 import Headers from "@/components/ui/headers";
+import PromptInput from "@/components/actions/prompt-input";
 
 export default function Home() {
   const session = useSession();
@@ -14,8 +15,9 @@ export default function Home() {
   if (!session || session.status !== "authenticated") redirect("/auth/signin");
 
   return (
-    <Section className="flex flex-col items-center justify-center space-y-6 text-neutral-900 w-full lg:max-w-2xl">
+    <Section className="flex flex-col items-center">
       <Headers />
+      <PromptInput />
       <SpotifySearch sdk={sdk} />
     </Section>
   );
