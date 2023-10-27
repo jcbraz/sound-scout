@@ -1,6 +1,6 @@
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import "@/app/globals.css";
-import AuthSessionProvider from "@/components/AuthSessionProvider";
+import AuthSessionProvider from "@/components/providers/AuthSessionProvider";
 import { getServerSession } from "next-auth";
 import { Space_Grotesk } from "next/font/google";
 

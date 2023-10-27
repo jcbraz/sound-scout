@@ -1,7 +1,11 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import Headers from "@/components/ui/headers";
+import { Section } from "@/components/ui/section";
 import { signIn, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import SignInPrompts from "./components/signin-prompts";
 
 export default function SignIn() {
 
@@ -9,10 +13,10 @@ export default function SignIn() {
     if (session && session.status === "authenticated") redirect("/");
 
     return (
-        <div>
-          <h1>Spotify Web API Typescript SDK in Next.js</h1>
-          <button onClick={() => signIn("spotify")}>Sign in with Spotify</button>
-          <p>{}</p>
-        </div>
+        <Section className="flex flex-col items-center space-y-28">
+          <Headers />
+          <Button variant="highlight" className="uppercase italic" onClick={() => signIn()}>Sign In With Spotify</Button>
+          <SignInPrompts />
+        </Section>
       );
 }
