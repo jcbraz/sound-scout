@@ -2,28 +2,31 @@
 
 import { type SearchResults, SpotifyApi } from "@spotify/web-api-ts-sdk";
 import sdk from "@/lib/spotify-sdk/ClientInstance";
-import { useSession, signOut, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
+import { Section } from "@/components/ui/section";
+import Headers from "@/components/ui/headers";
+import PromptInput from "@/components/actions/prompt-input";
+import SuggestionCards from "@/components/actions/suggestion-cards";
+import AuthenticatedDropdownMenu from "@/components/ui/authenticated-dropdown-menu";
 
 export default function Home() {
   const session = useSession();
 
-  if (!session || session.status !== "authenticated") {
-    return (
-      <div>
-        <h1>Spotify Web API Typescript SDK in Next.js</h1>
-        <button onClick={() => signIn("spotify")}>Sign in with Spotify</button>
-        <p>{}</p>
-      </div>
-    );
-  }
+  if (!session || session.status !== "authenticated") redirect("/auth/signin");
 
   return (
-    <div>
-      <p>Logged in as {session.data.user?.name}</p>
-      <button onClick={() => signOut()}>Sign out</button>
+    <Section className="flex flex-col items-center space-y-28">
+      <AuthenticatedDropdownMenu
+        name={session.data.user?.name ? session.data.user.name : ""}
+        email={session.data.user?.email ? session.data.user.email : ""}
+      />
+      <Headers />
+      <PromptInput />
+      <SuggestionCards />
       <SpotifySearch sdk={sdk} />
-    </div>
+    </Section>
   );
 }
 
