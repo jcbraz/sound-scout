@@ -4,19 +4,12 @@ import { type SearchResults, SpotifyApi } from "@spotify/web-api-ts-sdk";
 import sdk from "@/lib/spotify-sdk/ClientInstance";
 import { useSession, signOut, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 
 export default function Home() {
   const session = useSession();
 
-  if (!session || session.status !== "authenticated") {
-    return (
-      <div>
-        <h1>Spotify Web API Typescript SDK in Next.js</h1>
-        <button onClick={() => signIn("spotify")}>Sign in with Spotify</button>
-        <p>{}</p>
-      </div>
-    );
-  }
+  if (!session || session.status !== "authenticated") redirect("/auth/signin");
 
   return (
     <div>
