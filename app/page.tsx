@@ -5,6 +5,8 @@ import sdk from "@/lib/spotify-sdk/ClientInstance";
 import { useSession, signOut, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
+import { Section } from "@/components/ui/section";
+import Headers from "@/components/ui/headers";
 
 export default function Home() {
   const session = useSession();
@@ -12,11 +14,10 @@ export default function Home() {
   if (!session || session.status !== "authenticated") redirect("/auth/signin");
 
   return (
-    <div>
-      <p>Logged in as {session.data.user?.name}</p>
-      <button onClick={() => signOut()}>Sign out</button>
+    <Section className="flex flex-col items-center justify-center space-y-6 text-neutral-900 w-full lg:max-w-2xl">
+      <Headers />
       <SpotifySearch sdk={sdk} />
-    </div>
+    </Section>
   );
 }
 
