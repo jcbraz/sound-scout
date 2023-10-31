@@ -1,6 +1,5 @@
 import PromptButton from "@/components/ui/prompt-button";
 import { promptExamples } from "@/lib/utils";
-import { signIn } from "next-auth/react";
 
 const SignInPrompts = () => {
   return (
@@ -9,7 +8,11 @@ const SignInPrompts = () => {
         Potential Prompts
       </h4>
       {promptExamples.map((prompt, index) => (
-        <PromptButton key={index} label={prompt} onClick={() => signIn()} />
+        <PromptButton
+          authenticated={false}
+          key={index}
+          label={prompt}
+        />
       ))}
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { type SearchResults, SpotifyApi } from "@spotify/web-api-ts-sdk";
+import type { SearchResults, SpotifyApi, Track } from "@spotify/web-api-ts-sdk";
 import sdk from "@/lib/spotify-sdk/ClientInstance";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -18,10 +18,7 @@ export default function Home() {
 
   return (
     <Section className="flex flex-col items-center space-y-28">
-      <AuthenticatedDropdownMenu
-        name={session.data.user?.name ? session.data.user.name : ""}
-        email={session.data.user?.email ? session.data.user.email : ""}
-      />
+      <AuthenticatedDropdownMenu session={session.data} />
       <Headers />
       <PromptInput />
       <SuggestionCards />
@@ -35,8 +32,19 @@ function SpotifySearch({ sdk }: { sdk: SpotifyApi }) {
 
   useEffect(() => {
     (async () => {
-      const results = await sdk.search("The Beatles", ["artist"]);
+      const results = await sdk.search("More Love", ["track"]);
       setResults(() => results);
+      const actualResult = results.tracks.items.filter(
+        (item): item is SpotifyApi.Track =>
+          item.type === "track" &&
+          "artists" in item &&
+          item.artists[0].name === "Moderat"
+      );
+      console.log(actualResult);
+      const playlist: Track = (
+        await sdk.playlists.getPlaylistItems("37i9dQZF1DX0SM0LYsmbMT")
+      ).items[0].track.artists[0].name;
+      console.log(playlist);
     })();
   }, [sdk]);
 
