@@ -1,8 +1,8 @@
 'use server';
 
-import type { SpotifyApi } from "@spotify/web-api-ts-sdk";
 import { Playlist, BasicTrackInfo } from "./types";
 import { checkTrackType, filterTracks, generateCustomTitle, generateNewSuggestionsForReinforcement, openai } from "./utils";
+import sdk from '@/lib/spotify-sdk/ClientInstance';
 
 export async function generateTrackSuggestionsAsText(user_prompt: string) {
     const chat_completion = await openai.chat.completions.create({
@@ -27,7 +27,7 @@ export async function generateTrackSuggestionsAsText(user_prompt: string) {
     else return response;
 }
 
-async function getTrackURI(track: BasicTrackInfo, sdk: SpotifyApi) {
+async function getTrackURI(track: BasicTrackInfo) {
     const potentialTracks = await sdk.search(track.track_name, ['track'])
     const actualTrack = potentialTracks.tracks.items.filter(item => item.artists.at(0)?.name === track.track_artist);
 
@@ -35,18 +35,20 @@ async function getTrackURI(track: BasicTrackInfo, sdk: SpotifyApi) {
     else return actualTrack.at(0)?.uri;
 }
 
-async function getTracksURI(trackList: BasicTrackInfo[], sdk: SpotifyApi) {
+async function getTracksURI(trackList: BasicTrackInfo[]) {
     try {
-        const trackIds = await Promise.all(trackList.map(track => getTrackURI(track, sdk)));
+        const trackIds = await Promise.all(trackList.map(track => getTrackURI(track)));
         return trackIds.filter(id => id !== null) as string[];
     } catch (error) {
         console.error('Error getting tracks ids', error);
     }
 }
 
-async function createPlaylist(title: string, prompt: string, sdk: SpotifyApi) {
+async function createPlaylist(title: string, prompt: string) {
     try {
-        const playlist = await sdk.playlists.createPlaylist(process.env.SPOTIFY_USER_ID || '', {
+        if (!process.env.SPOTIFY_USER_ID) throw new Error('Missing SPOTIFY_USER_ID');
+
+        const playlist = await sdk.playlists.createPlaylist(process.env.SPOTIFY_USER_ID, {
             name: title,
             public: false,
             collaborative: true,
@@ -62,7 +64,7 @@ async function createPlaylist(title: string, prompt: string, sdk: SpotifyApi) {
     }
 }
 
-async function addTracksToPlaylist(tracksURI: string[], playlistId: string, sdk: SpotifyApi) {
+async function addTracksToPlaylist(tracksURI: string[], playlistId: string) {
     try {
         await sdk.playlists.addItemsToPlaylist(playlistId, tracksURI);
     } catch (error) {
@@ -70,7 +72,7 @@ async function addTracksToPlaylist(tracksURI: string[], playlistId: string, sdk:
     }
 }
 
-async function reinforcePlaylistResults(desiredTrackNumber: number, prompt: string, playlist: Playlist, sdk: SpotifyApi) {
+async function reinforcePlaylistResults(desiredTrackNumber: number, prompt: string, playlist: Playlist) {
     try {
         const playlistTracks = await sdk.playlists.getPlaylistItems(playlist.id);
 
@@ -93,9 +95,9 @@ async function reinforcePlaylistResults(desiredTrackNumber: number, prompt: stri
 
             try {
                 const newTracksInfo = filterTracks(newTracks);
-                const newTracksURI = await getTracksURI(newTracksInfo, sdk);
+                const newTracksURI = await getTracksURI(newTracksInfo);
                 if (newTracksURI === undefined || newTracksURI.length == 0) throw new Error('Error getting tracks ids from the new tracks when reinforcing the playlist results');
-                await addTracksToPlaylist(newTracksURI, playlist.id, sdk);
+                await addTracksToPlaylist(newTracksURI, playlist.id);
             } catch (error) {
                 console.error(error);
             }
@@ -105,23 +107,23 @@ async function reinforcePlaylistResults(desiredTrackNumber: number, prompt: stri
     }
 }
 
-export async function generatePlaylist(ai_response: string, user_prompt: string, sdk: SpotifyApi) {
+export async function generatePlaylist(ai_response: string, user_prompt: string) {
     try {
         const playlist_title = (await generateCustomTitle(ai_response))?.replace('"', "") || 'Playlist';
         const filteredTracks = filterTracks(ai_response);
 
-        const new_playlist = await createPlaylist(playlist_title, user_prompt, sdk);
+        const new_playlist = await createPlaylist(playlist_title, user_prompt);
         if (!new_playlist) {
             throw new Error('Error creating playlist');
         }
 
-        const tracksURI = await getTracksURI(filteredTracks, sdk);
+        const tracksURI = await getTracksURI(filteredTracks);
         if (!tracksURI || tracksURI.length == 0) {
             throw new Error('Error getting tracks ids from the filtered tracks');
         }
 
-        await addTracksToPlaylist(tracksURI, new_playlist.id, sdk);
-        await reinforcePlaylistResults(filteredTracks.length, user_prompt, new_playlist, sdk);
+        await addTracksToPlaylist(tracksURI, new_playlist.id);
+        await reinforcePlaylistResults(filteredTracks.length, user_prompt, new_playlist);
 
         return new_playlist;
     } catch (error) {

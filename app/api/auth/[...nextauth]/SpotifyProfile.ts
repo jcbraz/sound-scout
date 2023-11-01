@@ -1,13 +1,12 @@
 import { JWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
+import "dotenv/config";
 
-if (!process.env.SPOTIFY_CLIENT_ID) {
+if (!process.env.SPOTIFY_CLIENT_ID)
   throw new Error("Missing SPOTIFY_CLIENT_ID");
-}
 
-if (!process.env.SPOTIFY_CLIENT_SECRET) {
+if (!process.env.SPOTIFY_CLIENT_SECRET)
   throw new Error("Missing SPOTIFY_CLIENT_SECRET");
-}
 
 const spotifyProfile = SpotifyProvider({
   clientId: process.env.SPOTIFY_CLIENT_ID,
@@ -34,18 +33,25 @@ export default spotifyProfile;
 
 export async function refreshAccessToken(token: JWT) {
   try {
-    const response = await fetch(authURL, {
+
+    if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) throw new Error('Missing SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET');
+
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${Buffer.from(
+          `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+        ).toString("base64")}`,
       },
-      method: "POST",
+      body: `grant_type=refresh_token&refresh_token=${token.refresh_token}`,
+      cache: "no-cache",
     });
 
     const refreshedTokens = await response.json();
 
-    if (!response.ok) {
+    if (!response.ok)
       throw refreshedTokens;
-    }
 
     return {
       ...token,

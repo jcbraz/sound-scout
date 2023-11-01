@@ -32,13 +32,14 @@ export function filterTracks(ai_response: string): BasicTrackInfo[] {
   let pattern = /\s?\d+\.\s(.+)\s-\s(.+)/;
   let artist_delimiter_pattern = /ft\.|,|\(\s?feat/;
 
-  ai_response.match(pattern)?.forEach(element => {
-    let track = pattern.exec(element);
-    if (track) {
-      let artist = artist_delimiter_pattern.exec(track[2]?.trim())?.[0];
-      trackList.push({ "track_name": track[1], "track_artist": artist || "" });
+  for (let line of ai_response.split("\n")) {
+    const match = line.match(pattern);
+    if (match) {
+      let track_name = match[1];
+      let track_artist = match[2].split(artist_delimiter_pattern)[0];
+      trackList.push({ track_name, track_artist });
     }
-  });
+  }
 
   return trackList;
 }
