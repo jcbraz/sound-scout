@@ -1,3 +1,5 @@
+"use client";
+
 import { CreditCard, FileClock, Flag, LogOut, UserCheck } from "lucide-react";
 import { Button } from "./button";
 import {
@@ -11,15 +13,21 @@ import {
 } from "./dropdown-menu";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import type { Session } from "next-auth";
 
 type AuthenticatedDropdownMenuProps = {
-  name: string;
-  email: string;
+  session: Session | null;
 };
 
 const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
   return (
-    <div className="absolute right-0 top-0 mr-5 mt-5 lg:mr-10 lg:mt-10">
+    <div
+      className={
+        props.session !== null
+          ? "absolute right-0 top-0 mr-5 mt-5 lg:mr-10 lg:mt-10"
+          : "hidden"
+      }
+    >
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -27,7 +35,7 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
             className="flex w-full justify-center text-lg font-normal text-white"
           >
             <UserCheck className="mr-2 h-5 w-5" />{" "}
-            <span className="sm:flex hidden">{props.name}</span>
+            <span className="sm:flex hidden">{props.session ? props.session.user?.name : ''}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
@@ -39,7 +47,7 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
               <Link
                 href={{
                   pathname: "/history",
-                  query: { email: props.email },
+                  query: { email: props.session ? props.session.user?.email : '' },
                 }}
                 passHref
               >

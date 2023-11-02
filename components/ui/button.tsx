@@ -13,7 +13,9 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         highlight: "border border-2 border-c_grey bg-c_green text-c_grey",
+        highlightGradient: "border-2 border-c_grey bg-gradient-to-r from-c_green to-c_grey italic text-neutral-800",
         secondary: "border border-2 border-neutral-900 bg-c_grey text-black",
+        secondaryGradient: "border border-2 border-c_grey bg-gradient-to-r from-c_grey to-neutral-500 italic text-neutral-900",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },

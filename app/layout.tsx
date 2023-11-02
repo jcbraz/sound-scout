@@ -1,6 +1,7 @@
 import authOptions from "@/app/api/auth/[...nextauth]/authOptions";
 import "@/app/globals.css";
 import AuthSessionProvider from "@/components/providers/AuthSessionProvider";
+import { Toaster } from "@/components/ui/toaster";
 import { getServerSession } from "next-auth";
 import { Space_Grotesk } from "next/font/google";
 
@@ -17,6 +18,7 @@ export default async function RootLayout({
     <html className="bg-neutral-900" lang="en">
       <AuthSessionProvider session={session}>
         <body className={space_grotesk.className}>{children}</body>
+        {/* <Toaster /> */}
       </AuthSessionProvider>
     </html>
   );
