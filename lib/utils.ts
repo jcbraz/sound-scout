@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge"
 import { BasicTrackInfo } from "./types";
 import OpenAI from "openai";
 import type { Episode, Track } from "@spotify/web-api-ts-sdk";
+import { addUser, getUserByEmail } from "@/db/queries";
+import { Session } from "next-auth";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -82,4 +84,24 @@ export async function generateNewSuggestionsForReinforcement(prompt: string, pre
   const result = chat_completion.choices.at(0)?.message.content;
   if (result === undefined) return null;
   else return result;
+}
+
+
+export async function checkUserRegister(session: Session) {
+  if (!session.user?.email) return null;
+  const user = await getUserByEmail(session.user.email);
+  if (!user) {
+    try {
+      const new_user = await addUser({
+        email: session.user.email,
+        first_name: session.user.name?.split(" ")[0],
+        last_name: session.user.name?.split(" ")[1],
+      });
+      if (!new_user) throw new Error("Error adding user");
+      return new_user;
+    } catch (error) {
+      console.error("Error adding user: ", error);
+      return null;
+    }
+  } else return user.at(0)?.id;
 }

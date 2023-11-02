@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { ButtonState } from "@/lib/types";
+import { ButtonState, PromptHref } from "@/lib/types";
 import Link from "next/link";
 import React from "react";
 import { Icons } from "../ui/icons";
 
 interface ConditionalLinkProps extends React.HTMLAttributes<HTMLButtonElement> {
   disabled: boolean;
-  href: string;
+  href: PromptHref;
   buttonText: string;
   buttonState: ButtonState;
 }
@@ -29,9 +29,7 @@ const ConditionalLinkButton = ({
     {buttonState === "loading" && (
       <Icons.spinner className="animate-spin h-6 w-6" />
     )}
-    {buttonState === "done" && (
-      <Icons.check className="h-5 w-5 mr-3" />
-    )}
+    {buttonState === "done" && <Icons.check className="h-5 w-5 mr-3" />}
     {buttonState === "error" && <Icons.close className="h-6 w-6" />}
     {buttonState === "idle" && <p>{buttonText}</p>}
   </Button>
@@ -48,7 +46,13 @@ const ConditionalLink = React.forwardRef<HTMLDivElement, ConditionalLinkProps>(
             buttonState={props.buttonState}
           />
         ) : (
-          <Link href={props.href} passHref>
+          <Link
+            href={{
+              pathname: props.href.pathname,
+              query: props.href.query,
+            }}
+            passHref
+          >
             <ConditionalLinkButton
               buttonText={props.buttonText}
               disabled={false}

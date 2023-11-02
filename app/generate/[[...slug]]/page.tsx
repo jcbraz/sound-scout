@@ -4,20 +4,46 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import PromptShowcase from "./components/prompt-showcase";
 import ResultsShowcase from "./components/results-showcase";
+import { addPlaylist, checkIfPlaylistExists } from "@/db/queries";
 
-const GeneratePage = async ({ params }: { params: { slug: string } }) => {
+type SearchParamsType = {
+  prompt: string;
+  userId: number;
+};
+
+const GeneratePage = async ({
+  searchParams,
+}: {
+  searchParams: SearchParamsType;
+}) => {
   const session = await getServerSession();
   if (!session || !session.user) redirect("/auth/signin");
 
-  const { slug } = params;
-  if (slug === "") redirect("/");
-  const prompt = decodeURIComponent(slug);
+  const { prompt, userId } = searchParams;
+
+  if (prompt === "" || !prompt || !userId) redirect("/");
+
+  const databaseFlag = await checkIfPlaylistExists(prompt, userId);
+  let databaseResponse: number | null = null;
+
+  if (!databaseFlag) {
+    databaseResponse = await addPlaylist({
+      prompt: prompt,
+      user_id: userId,
+    });
+
+    if (!databaseResponse) redirect("/");
+  }
 
   return (
     <Section className="flex flex-col items-center lg:h-full">
       <AuthenticatedDropdownMenu session={session} />
       <PromptShowcase prompt={prompt} />
-      <ResultsShowcase user_prompt={prompt} />
+      <ResultsShowcase
+        playlist_id={databaseResponse as number}
+        user_id={userId}
+        user_prompt={prompt}
+      />
     </Section>
   );
 };

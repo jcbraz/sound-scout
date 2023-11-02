@@ -1,8 +1,14 @@
+"use client";
+
 import { useState } from "react";
 import { Input } from "../ui/input";
 import ConditionalLink from "./conditional-link";
 
-const PromptInput = () => {
+type PromptInputProps = {
+  userId: number;
+};
+
+const PromptInput = (props: PromptInputProps) => {
   const [input, setInput] = useState<string>("");
   const hasValidInput = input.length > 5;
 
@@ -19,7 +25,13 @@ const PromptInput = () => {
         buttonState="idle"
         buttonText="Submit Prompt"
         disabled={!hasValidInput}
-        href={`/generate/${input}`}
+        href={{
+          pathname: "/generate",
+          query: {
+            prompt: input,
+            userId: props.userId,
+          },
+        }}
       />
     </div>
   );

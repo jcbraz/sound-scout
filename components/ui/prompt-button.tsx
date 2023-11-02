@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 interface PromptButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   authenticated: boolean;
   label: string;
+  userId: number;
 }
 
 const PromptButton = forwardRef<HTMLButtonElement, PromptButtonProps>(
@@ -16,7 +17,7 @@ const PromptButton = forwardRef<HTMLButtonElement, PromptButtonProps>(
     const currentPath = usePathname();
 
     const pathToFollow = props.authenticated
-      ? `/generate/${props.label}`
+      ? `/generate/${props.userId}/${props.label}`
       : `/api/auth/signin?callbackUrl=${process.env.BASE_URL || 'http://localhost:3000' + currentPath}`;
 
     return (

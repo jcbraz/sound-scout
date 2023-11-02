@@ -8,4 +8,12 @@ export type Playlist = {
     url: string;
 };
 
+export type PromptHref = {
+    pathname: string;
+    query: {
+        userId: number;
+        prompt: string;
+    };
+}
+
 export type ButtonState = 'idle' | 'loading' | 'done' | 'error';

@@ -1,8 +1,10 @@
 'use server';
 
+import { spendCredit, updatePlaylistPrompt } from "@/db/queries";
 import { Playlist, BasicTrackInfo } from "./types";
 import { checkTrackType, filterTracks, generateCustomTitle, generateNewSuggestionsForReinforcement, openai } from "./utils";
 import sdk from '@/lib/spotify-sdk/ClientInstance';
+import { cookies } from "next/headers";
 
 export async function generateTrackSuggestionsAsText(user_prompt: string) {
     const chat_completion = await openai.chat.completions.create({
@@ -126,6 +128,18 @@ export async function generatePlaylist(ai_response: string, user_prompt: string)
         await reinforcePlaylistResults(filteredTracks.length, user_prompt, new_playlist);
 
         return new_playlist;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export async function creditsAndPromptUpdate(user_id: number, playlist_id: number, user_prompt: string) {
+    try {
+        const creditResponse = await spendCredit(user_id);
+        if (!creditResponse) throw new Error('Error in credit update.');
+        const updateResponse = await updatePlaylistPrompt(playlist_id, user_prompt);
+        if (!updateResponse) throw new Error('Error in playlist update.');
     } catch (error) {
         console.error(error);
         throw error;
