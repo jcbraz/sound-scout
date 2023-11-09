@@ -4,7 +4,6 @@ import { spendCredit, updatePlaylistPrompt } from "@/db/queries";
 import { Playlist, BasicTrackInfo } from "./types";
 import { checkTrackType, filterTracks, generateCustomTitle, generateNewSuggestionsForReinforcement, openai } from "./utils";
 import sdk from '@/lib/spotify-sdk/ClientInstance';
-import { cookies } from "next/headers";
 
 export async function generateTrackSuggestionsAsText(user_prompt: string) {
     const chat_completion = await openai.chat.completions.create({

@@ -16,12 +16,14 @@ const PromptButton = forwardRef<HTMLButtonElement, PromptButtonProps>(
   ({ className, ...props }, ref) => {
     const currentPath = usePathname();
 
-    const pathToFollow = props.authenticated
-      ? `/generate/${props.userId}/${props.label}`
-      : `/api/auth/signin?callbackUrl=${process.env.BASE_URL || 'http://localhost:3000' + currentPath}`;
-
     return (
-      <Link className="w-full" href={pathToFollow} passHref>
+      <Link className="w-full" href={{
+        pathname: "/generate",
+        query: {
+          prompt: props.label,
+          userId: props.userId,
+        },
+      }} passHref>
         <Button
           variant="secondary"
           type="submit"

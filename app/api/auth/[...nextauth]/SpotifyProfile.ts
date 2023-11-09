@@ -23,6 +23,8 @@ const scopes = [
   "user-modify-playback-state",
   "playlist-read-private",
   "playlist-read-collaborative",
+  "playlist-modify-private",
+  "playlist-modify-public"
 ];
 
 authURL.searchParams.append("scope", scopes.join(" "));
@@ -57,8 +59,8 @@ export async function refreshAccessToken(token: JWT) {
       ...token,
       access_token: refreshedTokens.access_token,
       token_type: refreshedTokens.token_type,
-      expires_at: refreshedTokens.expires_at,
-      expires_in: (refreshedTokens.expires_at ?? 0) - Date.now() / 1000,
+      expires_at: (Date.now() / 1000) + refreshedTokens.expires_in,
+      expires_in: refreshedTokens.expires_in,
       refresh_token: refreshedTokens.refresh_token ?? token.refresh_token,
       scope: refreshedTokens.scope,
     };
