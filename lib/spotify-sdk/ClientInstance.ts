@@ -6,7 +6,7 @@ import {
   SpotifyApi,
 } from "@spotify/web-api-ts-sdk"; // use "@spotify/web-api-ts-sdk" in your own project
 import authOptions, { AuthUser } from "@/app/api/auth/[...nextauth]/authOptions";
-import { getSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { getServerSession } from "next-auth";
 
 /**

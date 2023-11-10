@@ -85,6 +85,7 @@ export async function updatePlaylistPrompt(playlist_id: number, prompt: string):
         const query = await db.update(playlist).set({
             prompt: prompt
         }).where(eq(playlist.id, playlist_id));
+        console.log('query: ', query);
         if (query && query.rowsAffected === 1) return true;
         else throw new Error('Bad Playlist update data!');
     } catch (error) {
@@ -93,30 +94,50 @@ export async function updatePlaylistPrompt(playlist_id: number, prompt: string):
     }
 }
 
-export async function spendCredit(user_id: number): Promise<boolean> {
+export async function getUserCredits(user_id: number): Promise<number | undefined> {
+    const credit_query = await db.select({
+        credits: user.credits
+    }).from(user).where(eq(user.id, user_id));
+    const user_credits = credit_query.at(0)?.credits;
+    if (user_credits === undefined) return undefined;
+    else return user_credits;
+}
+
+
+export async function spendCredit(user_id: number, user_credits: number): Promise<boolean> {
+    if (user_credits <= 0) return false;
     try {
-        const query = await db.select({
-            credits: user.credits
-        }).from(user).where(eq(user.id, user_id));
-        const user_credits = query.at(0)?.credits;
-        if (user_credits) {
-            try {
-                const creditsSpending = await db.update(user).set({
-                    credits: user_credits - 1
-                }).where(eq(user.id, user_id));
-                if (creditsSpending && creditsSpending.rowsAffected === 1) return true;
-                else throw new Error('Bad User update data!');
-            } catch (error) {
-                console.error('Error updating database: ', error);
-                return false;
-            }
-        } else throw new Error('Bad User query data!');
+        const creditsSpending = await db.update(user).set({
+            credits: user_credits - 1
+        }).where(eq(user.id, user_id));
+        if (creditsSpending && creditsSpending.rowsAffected === 1) return true;
+        else throw new Error('Bad User update data!');
     } catch (error) {
-        console.error('Error spending credit: ', error);
+        console.error('Error updating database: ', error);
         return false;
+
     }
 }
 
+export async function addCredits(user_id: number, credit_amount: number): Promise<boolean> {
+    const credit_query = await db.select({
+        credits: user.credits
+    }).from(user).where(eq(user.id, user_id));
+    const user_credits = credit_query.at(0)?.credits;
+    if (user_credits === undefined) return false;
+    else {
+        try {
+            const creditsSpending = await db.update(user).set({
+                credits: user_credits + credit_amount
+            }).where(eq(user.id, user_id));
+            if (creditsSpending && creditsSpending.rowsAffected === 1) return true;
+            else throw new Error('Bad User update data!');
+        } catch (error) {
+            console.error('Error updating database: ', error);
+            return false;
+        }
+    }
+}
 
 export async function checkIfPlaylistExists(prompt: string, userId: number): Promise<boolean> {
     try {

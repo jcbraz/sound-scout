@@ -132,15 +132,3 @@ export async function generatePlaylist(ai_response: string, user_prompt: string)
         throw error;
     }
 }
-
-export async function creditsAndPromptUpdate(user_id: number, playlist_id: number, user_prompt: string) {
-    try {
-        const creditResponse = await spendCredit(user_id);
-        if (!creditResponse) throw new Error('Error in credit update.');
-        const updateResponse = await updatePlaylistPrompt(playlist_id, user_prompt);
-        if (!updateResponse) throw new Error('Error in playlist update.');
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-}

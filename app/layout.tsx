@@ -17,8 +17,10 @@ export default async function RootLayout({
   return (
     <html className="bg-neutral-900" lang="en">
       <AuthSessionProvider session={session}>
-        <body className={space_grotesk.className}>{children}</body>
-        {/* <Toaster /> */}
+        <body className={space_grotesk.className}>
+          {children}
+          <Toaster />
+        </body>
       </AuthSessionProvider>
     </html>
   );

@@ -1,29 +1,28 @@
-'use client';
-
 import { forwardRef } from "react";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 interface PromptButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   authenticated: boolean;
   label: string;
-  userId: number;
+  userId?: number;
 }
 
 const PromptButton = forwardRef<HTMLButtonElement, PromptButtonProps>(
   ({ className, ...props }, ref) => {
-    const currentPath = usePathname();
-
     return (
-      <Link className="w-full" href={{
-        pathname: "/generate",
-        query: {
-          prompt: props.label,
-          userId: props.userId,
-        },
-      }} passHref>
+      <Link
+        className="w-full"
+        href={{
+          pathname: "/generate",
+          query: {
+            prompt: props.label,
+            userId: props.userId,
+          },
+        }}
+        passHref
+      >
         <Button
           variant="secondary"
           type="submit"
