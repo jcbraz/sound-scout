@@ -80,20 +80,6 @@ export async function addFeedback(feedback_values: InsertFeedback): Promise<numb
     }
 }
 
-export async function updatePlaylistPrompt(playlist_id: number, prompt: string): Promise<boolean> {
-    try {
-        const query = await db.update(playlist).set({
-            prompt: prompt
-        }).where(eq(playlist.id, playlist_id));
-        console.log('query: ', query);
-        if (query && query.rowsAffected === 1) return true;
-        else throw new Error('Bad Playlist update data!');
-    } catch (error) {
-        console.error('Error updating playlist prompt: ', error);
-        return false;
-    }
-}
-
 export async function getUserCredits(user_id: number): Promise<number | undefined> {
     const credit_query = await db.select({
         credits: user.credits

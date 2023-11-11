@@ -5,12 +5,29 @@ import { Input } from "../ui/input";
 import ConditionalLink from "./conditional-link";
 
 type PromptInputProps = {
+  credits: number;
   userId: number;
 };
 
 const PromptInput = (props: PromptInputProps) => {
   const [input, setInput] = useState<string>("");
   const hasValidInput = input.length > 5;
+
+  const pathToFollow =
+    props.credits > 0
+      ? {
+          pathname: "/generate",
+          query: {
+            prompt: input,
+            userId: props.userId,
+          },
+        }
+      : {
+          pathname: "/plans",
+          query: {
+            userId: props.userId,
+          },
+        };
 
   return (
     <div className="w-full max-w-2xl flex flex-col items-center">
@@ -25,13 +42,7 @@ const PromptInput = (props: PromptInputProps) => {
         buttonState="idle"
         buttonText="Submit Prompt"
         disabled={!hasValidInput}
-        href={{
-          pathname: "/generate",
-          query: {
-            prompt: input,
-            userId: props.userId,
-          },
-        }}
+        href={pathToFollow}
       />
     </div>
   );

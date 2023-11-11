@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import PromptShowcase from "./components/prompt-showcase";
 import ResultsShowcase from "./components/results-showcase";
-import { addPlaylist, checkIfPlaylistExists, getUserCredits } from "@/db/queries";
+import { getUserCredits } from "@/db/queries";
 
 type SearchParamsType = {
   prompt: string;
@@ -23,18 +23,6 @@ const GeneratePage = async ({
 
   if (prompt === "" || !prompt || !userId) redirect("/");
 
-  const databaseFlag = await checkIfPlaylistExists(prompt, userId);
-  let databaseResponse: number | null = null;
-
-  if (!databaseFlag) {
-    databaseResponse = await addPlaylist({
-      prompt: prompt,
-      user_id: userId,
-    });
-
-    if (!databaseResponse) redirect("/");
-  }
-
   const credits = await getUserCredits(userId);
 
   return (
@@ -42,7 +30,6 @@ const GeneratePage = async ({
       <AuthenticatedDropdownMenu session={session} />
       <PromptShowcase prompt={prompt} />
       <ResultsShowcase
-        playlist_id={databaseResponse as number}
         user_credits={credits}
         user_id={userId}
         user_prompt={prompt}

@@ -6,23 +6,30 @@ import Link from "next/link";
 interface PromptButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   authenticated: boolean;
   label: string;
+  path: string;
   userId?: number;
 }
 
 const PromptButton = forwardRef<HTMLButtonElement, PromptButtonProps>(
   ({ className, ...props }, ref) => {
+    const pathToFollow =
+      props.path == "/generate"
+        ? {
+            pathname: props.path,
+            query: {
+              prompt: props.label,
+              userId: props.userId,
+            },
+          }
+        : {
+            pathname: props.path,
+            query: {
+              userId: props.userId,
+            },
+          };
+
     return (
-      <Link
-        className="w-full"
-        href={{
-          pathname: "/generate",
-          query: {
-            prompt: props.label,
-            userId: props.userId,
-          },
-        }}
-        passHref
-      >
+      <Link className="w-full" href={pathToFollow} passHref>
         <Button
           variant="secondary"
           type="submit"
