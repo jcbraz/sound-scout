@@ -7,6 +7,7 @@ import AuthenticatedDropdownMenu from "@/components/ui/authenticated-dropdown-me
 import { getServerSession } from "next-auth";
 import { checkUserRegister } from "@/lib/utils";
 import { toast } from "@/components/ui/use-toast";
+import { getUserCredits } from "@/db/queries";
 
 export default async function Home() {
   const session = await getServerSession();
@@ -23,12 +24,23 @@ export default async function Home() {
     }, 3000);
   }
 
+  const credits = await getUserCredits(userDB as number);
+  if (credits === undefined) {
+    toast({
+      title: "Something went wrong",
+      description: "Please try to login again",
+    });
+    setTimeout(() => {
+      redirect("/auth/signin");
+    }, 3000);
+  }
+
   return (
     <Section className="flex flex-col items-center space-y-12">
       <AuthenticatedDropdownMenu session={session} />
       <Headers />
-      <PromptInput userId={userDB as number} />
-      <SuggestionCards userId={userDB as number}/>
+      <PromptInput credits={credits as number} userId={userDB as number} />
+      <SuggestionCards credits={credits as number} userId={userDB as number}/>
     </Section>
   );
 }

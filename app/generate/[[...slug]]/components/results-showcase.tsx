@@ -2,40 +2,26 @@
 
 import { useChat } from "ai/react";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/ui/icons";
 import { generatePlaylist } from "@/lib/actions";
 import { useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
-import { spendCredit, updatePlaylistPrompt } from "@/db/queries";
+import { addPlaylist, spendCredit } from "@/db/queries";
 import { signOut } from "next-auth/react";
-import { redirect } from "next/navigation";
+import SuggestionsSubmitButton from "./suggestions-submit-button";
+import URLSubmitButton from "./url-submit-button";
+import SpotifyRedirectButton from "./spotify-redirect-button";
 
 type ResultsShowcaseProps = {
   user_credits: number | undefined;
   user_id: number;
   user_prompt: string;
-  playlist_id: number;
 };
 
 const ResultsShowcase = (props: ResultsShowcaseProps) => {
+  const [isSuggestionsSubmitted, setSubmitState] = useState<boolean>(false);
+  console.log(isSuggestionsSubmitted);
   const [url, setUrl] = useState<string | null>(null);
   const toast = useToast();
-  let disabledFlag: boolean = false;
-  if (props.user_credits === undefined) {
-    disabledFlag = true;
-    toast.toast({
-      action: (
-        <ToastAction onClick={() => signOut()} altText="Dismiss">
-          Sign Out
-        </ToastAction>
-      ),
-      title: "Error",
-      description:
-        "Something went wrong from our side. Please sign out an try again",
-      variant: "destructive",
-    });
-  } else if (props.user_credits <= 0) redirect("/plans");
 
   const { messages, isLoading, handleSubmit } = useChat({
     api: "/api/chat",
@@ -52,7 +38,7 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
             "Our friends at OpenAI are getting a lot of requests at the moment. Please try again later.",
         });
       else {
-        disabledFlag = true;
+        setSubmitState(true);
         spendCredit(props.user_id, props.user_credits as number)
           .then((res) => {
             if (res === false) {
@@ -74,25 +60,6 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
               title: "Error",
               description: err.message,
               variant: "destructive",
-            });
-          });
-        updatePlaylistPrompt(props.playlist_id, props.user_prompt)
-          .then((res) => {
-            if (res === false) {
-              throw new Error("Something went wrong from our side.");
-            }
-          })
-          .catch((err) => {
-            toast.toast({
-              action: (
-                <ToastAction altText="Dismiss" onClick={() => signOut()}>
-                  Sign Out
-                </ToastAction>
-              ),
-              title: "Error",
-              description:
-                "Something went wrong from our side. Please sign out and try again." +
-                err.message,
             });
           });
       }
@@ -119,24 +86,17 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
         className="flex flex-col justify-center items-center space-y-10 max-w-xl"
         onSubmit={handleSubmit}
       >
-        <Button
-          variant="highlight"
-          className="w-full max-w-2xl mt-10 uppercase italic"
-          type="submit"
-          disabled={isLoading || disabledFlag}
-        >
-          {isLoading ? (
-            <Icons.spinner className="w-6 h-6 animate-spin" />
-          ) : (
-            "Generate Playlist"
-          )}
-        </Button>
-        <h6 className="text-xs italic max-w-sm text-center">
-          <span className="font-bold">WARNING!</span> By submitting the request,
-          1 credit will be used. If the request does not work, the credit will
-          be returned.
-        </h6>
-        <div className="grid lg:grid-cols-2 grid-cols-1 lg:space-y-2 space-y-4 lg:gap-x-10 lg:grid-flow-row lg:text-justify text-center lg:max-w-2xl max-w-sm">
+        {!isSuggestionsSubmitted && (
+          <>
+            <SuggestionsSubmitButton isLoading={isLoading} />
+            <h6 className="text-xs italic max-w-sm text-center">
+              <span className="font-bold">WARNING!</span> By submitting the
+              request, 1 credit will be used. If the request does not work, the
+              credit will be returned.
+            </h6>
+          </>
+        )}
+        <div className="grid lg:grid-cols-2 grid-cols-1 lg:space-y-2 space-y-4 lg:gap-x-10 lg:grid-flow-row lg:text-justify text-center lg:max-w-2xl max-w-sm mt-14">
           {messages.map((message) =>
             message.content
               .split("\n")
@@ -152,7 +112,7 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
           )}
         </div>
       </form>
-      {messages && (
+      {messages && isSuggestionsSubmitted && (
         <form
           action={async () => {
             const content = messages
@@ -163,6 +123,19 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
             ).url;
             if (givenURL) {
               setUrl(givenURL);
+              addPlaylist({
+                id: givenURL.replace("https://open.spotify.com/playlist/", ""),
+                user_id: props.user_id,
+                prompt: props.user_prompt,
+                suggestion: content,
+              }).catch((err) => {
+                toast.toast({
+                  action: <ToastAction altText="Dismiss">Dismiss</ToastAction>,
+                  title: "Some trouble in our side",
+                  description: err.message,
+                  variant: "destructive",
+                });
+              });
             }
           }}
           className="mt-14"
@@ -170,18 +143,7 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
           <h4 className="italic lg:text-lg text-base">
             Looks good. Let's get you access to the playlist.
           </h4>
-          <Button
-            variant="secondary"
-            className="w-full max-w-2xl mt-10 uppercase italic"
-            type="submit"
-            disabled={url !== null || isLoading}
-          >
-            {isLoading ? (
-              <Icons.spinner className="w-6 h-6 animate-spin" />
-            ) : (
-              "Get It On Spotify"
-            )}
-          </Button>
+          {url ? <SpotifyRedirectButton url={url} /> : <URLSubmitButton />}
         </form>
       )}
     </>

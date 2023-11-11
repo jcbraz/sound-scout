@@ -9,11 +9,10 @@ CREATE TABLE `feedback` (
 );
 --> statement-breakpoint
 CREATE TABLE `playlist` (
-	`id` serial AUTO_INCREMENT NOT NULL,
+	`id` varchar(65) NOT NULL,
 	`user_id` int NOT NULL,
 	`prompt` varchar(250),
 	`suggestion` varchar(1000),
-	`url` varchar(65),
 	`created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT `playlist_id` PRIMARY KEY(`id`)
 );
@@ -28,4 +27,5 @@ CREATE TABLE `user` (
 	CONSTRAINT `user_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
+CREATE INDEX `user_idx` ON `feedback` (`user_id`);--> statement-breakpoint
 CREATE INDEX `user_idx` ON `playlist` (`user_id`);

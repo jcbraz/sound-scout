@@ -12,15 +12,13 @@ export const user = mysqlTable('user', {
 });
 
 export const playlist = mysqlTable('playlist', {
-  id: serial('id').primaryKey(),
+  id: varchar('id', { length: 30 }).primaryKey(), // id == url => always unique
   user_id: int('user_id').notNull(),
   prompt: varchar('prompt', { length: 250 }),
   suggestion: varchar('suggestion', { length: 1000 }),
-  url: varchar('url', { length: 65 }), // url
   created_at: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`)
 }, (playlists) => ({
   userIndex: index('user_idx').on(playlists.user_id),
-  urlIndex: index('url_idx').on(playlists.url)
 }));
 
 export const feedback = mysqlTable('feedback', {

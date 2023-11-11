@@ -1,6 +1,5 @@
 'use server';
 
-import { spendCredit, updatePlaylistPrompt } from "@/db/queries";
 import { Playlist, BasicTrackInfo } from "./types";
 import { checkTrackType, filterTracks, generateCustomTitle, generateNewSuggestionsForReinforcement, openai } from "./utils";
 import sdk from '@/lib/spotify-sdk/ClientInstance';
@@ -110,7 +109,7 @@ async function reinforcePlaylistResults(desiredTrackNumber: number, prompt: stri
 
 export async function generatePlaylist(ai_response: string, user_prompt: string) {
     try {
-        const playlist_title = (await generateCustomTitle(ai_response))?.replace('"', "") || 'Playlist';
+        const playlist_title = (await generateCustomTitle(ai_response))?.replace('"', "").replace('"', "") || 'Playlist';
         const filteredTracks = filterTracks(ai_response);
 
         const new_playlist = await createPlaylist(playlist_title, user_prompt);

@@ -12,7 +12,7 @@ export type PromptHref = {
     pathname: string;
     query: {
         userId: number;
-        prompt: string;
+        prompt?: string;
     };
 }
 

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "a4b19f4c-26f6-460b-a274-63a039f0138f",
+  "id": "0dce4ba8-4049-4d7e-9941-524d4e2cc0fe",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "feedback": {
@@ -52,7 +52,15 @@
           "default": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "user_idx": {
+          "name": "user_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {
         "feedback_id": {
@@ -69,10 +77,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "varchar(65)",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "user_id": {
           "name": "user_id",
@@ -91,13 +99,6 @@
         "suggestion": {
           "name": "suggestion",
           "type": "varchar(1000)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "url": {
-          "name": "url",
-          "type": "varchar(65)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
