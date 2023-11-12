@@ -1,5 +1,5 @@
 import { relations, sql } from "drizzle-orm";
-import { index, int, mysqlTable, serial, tinyint, timestamp, varchar, boolean } from "drizzle-orm/mysql-core";
+import { index, int, mysqlTable, serial, timestamp, varchar, boolean, smallint, decimal } from "drizzle-orm/mysql-core";
 import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 
 export const user = mysqlTable('user', {
@@ -7,7 +7,7 @@ export const user = mysqlTable('user', {
   email: varchar('email', { length: 320 }).notNull(),
   first_name: varchar('first_name', { length: 50 }),
   last_name: varchar('last_name', { length: 50 }),
-  credits: tinyint('credits').notNull().default(5),
+  credits: smallint('credits').notNull().default(5),
   created_at: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull()
 });
 
@@ -32,6 +32,24 @@ export const feedback = mysqlTable('feedback', {
   userIndex: index('user_idx').on(feedbacks.user_id)
 }));
 
+export const plan = mysqlTable('plan', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 25 }).notNull(),
+  preHeader: varchar('pre_header', { length: 100 }).notNull(),
+  credits: smallint('credits').notNull(),
+  price: decimal('price', { precision: 3, scale: 2 }).notNull(),
+  created_at: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull()
+});
+
+export const features = mysqlTable('features', {
+  id: serial('id').primaryKey(),
+  plan_id: int('plan_id').notNull(),
+  description: varchar('feature', { length: 150 }).notNull(),
+  included: boolean('included').default(true).notNull()
+}, (features) => ({
+  planIndex: index('plan_idx').on(features.plan_id)
+}));
+
 export const userRelations = relations(user, ({ many }) => ({
   playlist: many(playlist)
 }));
@@ -51,6 +69,17 @@ export const feedbackRelations = relations(feedback, ({ one }) => ({
   })
 }));
 
+export const planRelations = relations(plan, ({ many }) => ({
+  features: many(features)
+}));
+
+export const featuresRelations = relations(features, ({ one }) => ({
+  plan: one(plan, {
+    fields: [features.plan_id],
+    references: [plan.id]
+  })
+}));
+
 
 export type SelectUser = InferSelectModel<typeof user>;
 export type InsertUser = InferInsertModel<typeof user>;
@@ -58,3 +87,7 @@ export type SelectPlaylist = InferSelectModel<typeof playlist>;
 export type InsertPlaylist = InferInsertModel<typeof playlist>;
 export type SelectFeedback = InferSelectModel<typeof feedback>;
 export type InsertFeedback = InferInsertModel<typeof feedback>;
+export type SelectPlan = InferSelectModel<typeof plan>;
+export type InsertPlan = InferInsertModel<typeof plan>;
+export type SelectFeatures = InferSelectModel<typeof features>;
+export type InsertFeatures = InferInsertModel<typeof features>;

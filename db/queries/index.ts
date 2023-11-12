@@ -4,6 +4,7 @@ import { eq, and } from "drizzle-orm";
 import { db } from "..";
 import { user, playlist, feedback } from "../schema";
 import type { InsertFeedback, InsertPlaylist, InsertUser, SelectPlaylist, SelectUser } from '../schema'
+import { PricingPlan } from "@/lib/types";
 
 export async function getUser(id: number): Promise<SelectUser[] | null> {
     try {
@@ -125,13 +126,12 @@ export async function addCredits(user_id: number, credit_amount: number): Promis
     }
 }
 
-export async function checkIfPlaylistExists(prompt: string, userId: number): Promise<boolean> {
-    try {
-        const query = await db.select().from(playlist).where(and(eq(playlist.prompt, prompt), eq(playlist.user_id, userId)));
-        if (query.length === 0) return false;
-        else return true;
-    } catch (error) {
-        console.error('Error checking if playlist exists: ', error);
-        return false;
-    }
+
+export async function getPlans(): Promise<PricingPlan[]> {
+    const plans = await db.query.plan.findMany({
+        with: {
+            features: true
+        }
+    });
+    return plans;
 }

@@ -8,7 +8,7 @@ const Section = forwardRef<HTMLDivElement, SectionProps>(
     return (
       <section
         className={cn(
-          "w-full lg:h-screen h-full min-h-screen p-24 bg-neutral-900 text-c_grey",
+          "w-full lg:h-screen h-full min-h-screen lg:p-24 p-12 bg-neutral-900 text-c_grey",
           className
         )}
         ref={ref}

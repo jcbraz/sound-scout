@@ -35,7 +35,9 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
             className="flex w-full justify-center text-lg font-normal text-white"
           >
             <UserCheck className="mr-2 h-5 w-5" />{" "}
-            <span className="sm:flex hidden">{props.session ? props.session.user?.name : ''}</span>
+            <span className="sm:flex hidden">
+              {props.session ? props.session.user?.name : ""}
+            </span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56">
@@ -47,7 +49,9 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
               <Link
                 href={{
                   pathname: "/history",
-                  query: { email: props.session ? props.session.user?.email : '' },
+                  query: {
+                    email: props.session ? props.session.user?.email : "",
+                  },
                 }}
                 passHref
               >
@@ -56,8 +60,13 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
             </DropdownMenuItem>
             <DropdownMenuItem>
               <CreditCard className="mr-2 h-4 w-4" />
-              <Link href="/billing" passHref>
-                <span>Billing</span>
+              <Link href={{
+                pathname: "/plans",
+                query: {
+                  userId: props.session ? props.session.user?.name : "",
+                }
+              }} passHref>
+                <span>Credit Plans</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuGroup>

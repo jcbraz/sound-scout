@@ -6,7 +6,7 @@ import Link from "next/link";
 interface PromptButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   authenticated: boolean;
   label: string;
-  path: string;
+  path?: string;
   userId?: number;
 }
 
