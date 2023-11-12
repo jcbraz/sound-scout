@@ -23,6 +23,7 @@ const GeneratePage = async ({
 
   if (prompt === "" || !prompt || !userId) redirect("/");
 
+
   const credits = await getUserCredits(userId);
 
   return (
