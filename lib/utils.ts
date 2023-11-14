@@ -20,12 +20,11 @@ export function checkTrackType(track: Track | Episode): track is Track {
   return track as Track !== undefined && (track as Track).type === "track";
 }
 
-// if (!process.env.OPEN_AI_KEY as string)
-//   throw new Error("Missing env var from OpenAI");
+if (!process.env.OPEN_AI_KEY)
+  throw new Error("Missing env var from OpenAI");
 
 export const openai = new OpenAI({
-  apiKey: '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',
-  dangerouslyAllowBrowser: true, // remove
+  apiKey: process.env.OPEN_AI_KEY as string,
 });
 
 // Auxiliary functions for playlist generation
