@@ -4,7 +4,7 @@ import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 
 export const user = mysqlTable('user', {
   id: serial('id').primaryKey(),
-  email: varchar('email', { length: 320 }).notNull(),
+  email: varchar('email', { length: 320 }).unique().notNull(),
   first_name: varchar('first_name', { length: 50 }),
   last_name: varchar('last_name', { length: 50 }),
   credits: smallint('credits').notNull().default(5),

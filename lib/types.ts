@@ -12,13 +12,13 @@ export type Playlist = {
 
 export type PromptHref = {
     pathname: string;
-    query: {
-        userId: number;
+    query?: {
+        userId: number | string;
         prompt?: string;
     };
 }
 
-export type ButtonState = 'idle' | 'loading' | 'done' | 'error';
+export type SubmittionState = 'idle' | 'loading' | 'done' | 'error';
 
 
 export type PricingPlan = {
