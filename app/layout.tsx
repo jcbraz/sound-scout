@@ -21,7 +21,7 @@ export default async function RootLayout({
         <body className={space_grotesk.className}>
           {children}
           <Toaster />
-          <Footer />
+          <Footer session={session} />
         </body>
       </AuthSessionProvider>
     </html>

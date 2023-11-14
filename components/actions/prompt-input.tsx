@@ -43,6 +43,7 @@ const PromptInput = (props: PromptInputProps) => {
         buttonText="Submit Prompt"
         disabled={!hasValidInput}
         href={pathToFollow}
+        withMargin
       />
     </div>
   );
