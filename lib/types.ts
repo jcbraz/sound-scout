@@ -30,3 +30,9 @@ export type PricingPlan = {
     price: string;
     features: SelectFeatures[];
 };
+
+
+export type LinkingReference = {
+    label: string;
+    href: string;
+}

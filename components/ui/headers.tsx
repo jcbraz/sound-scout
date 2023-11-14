@@ -1,13 +1,16 @@
+"use client";
+
+import { Logo } from "./logo";
+import useTypewriter from "./type-writter";
+
 const Headers = () => {
+  const displayText = useTypewriter("t/he spotify playlist engine", 50);
+
   return (
     <div className="flex flex-col items-center justify-center space-y-6">
-      <h1 className="lg:text-6xl text-4xl font-bold uppercase italic">
-        Sound Scout
-      </h1>
-      <h3 className="lg:text-3xl text-xl font-semibold italic tracking-wide">
-        the
-        <span className="text-c_green"> spotify </span>
-        playlist engine
+      <Logo />
+      <h3 className="lg:text-3xl text-xl font-semibold tracking-wide text-transparent bg-clip-text bg-gradient-to-t from-c_grey to-c_green italic max-w-2xl text-center">
+        {displayText}
       </h3>
     </div>
   );
