@@ -20,8 +20,8 @@ export function checkTrackType(track: Track | Episode): track is Track {
   return track as Track !== undefined && (track as Track).type === "track";
 }
 
-if (!process.env.OPEN_AI_KEY)
-  throw new Error("Missing env var from OpenAI");
+// if (!process.env.OPEN_AI_KEY)
+//   throw new Error("Missing env var from OpenAI");
 
 export const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_KEY as string,
