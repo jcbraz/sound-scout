@@ -3,7 +3,7 @@ import { OpenAIStream, StreamingTextResponse } from 'ai';
 
 export const runtime = 'edge'
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY })
 
 export async function POST(req: Request) {
     // Extract the `messages` from the body of the request
