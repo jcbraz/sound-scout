@@ -1,10 +1,10 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { BasicTrackInfo } from "./types";
-import OpenAI from "openai";
 import type { Episode, Track } from "@spotify/web-api-ts-sdk";
 import { addUser, getUserByEmail } from "@/db/queries";
 import { Session } from "next-auth";
+import { openai } from "./open-ai";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -19,13 +19,6 @@ export const promptExamples = [
 export function checkTrackType(track: Track | Episode): track is Track {
   return track as Track !== undefined && (track as Track).type === "track";
 }
-
-// if (!process.env.OPEN_AI_KEY)
-//   throw new Error("Missing env var from OpenAI");
-
-export const openai = new OpenAI({
-  apiKey: process.env.OPEN_AI_KEY as string,
-});
 
 // Auxiliary functions for playlist generation
 export function filterTracks(ai_response: string): BasicTrackInfo[] {

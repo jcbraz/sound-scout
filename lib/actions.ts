@@ -1,7 +1,8 @@
 'use server';
 
+import { openai } from "./open-ai";
 import { Playlist, BasicTrackInfo } from "./types";
-import { checkTrackType, filterTracks, generateCustomTitle, generateNewSuggestionsForReinforcement, openai } from "./utils";
+import { checkTrackType, filterTracks, generateCustomTitle, generateNewSuggestionsForReinforcement } from "./utils";
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
 export async function generateTrackSuggestionsAsText(user_prompt: string) {
