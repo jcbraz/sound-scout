@@ -1,11 +1,12 @@
 'use server';
 
-import { openai } from "./open-ai";
+import { openaiInit } from "./open-ai";
 import { Playlist, BasicTrackInfo } from "./types";
 import { checkTrackType, filterTracks, generateCustomTitle, generateNewSuggestionsForReinforcement } from "./utils";
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
 export async function generateTrackSuggestionsAsText(user_prompt: string) {
+    const openai = await openaiInit();
     const chat_completion = await openai.chat.completions.create({
         messages: [{
             role: 'user',
