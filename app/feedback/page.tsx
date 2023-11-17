@@ -1,5 +1,5 @@
 import { Section } from "@/components/ui/section";
-import MainPageLink from "../plans/components/main-page-link";
+import MainPageLink from "../../components/ui/main-page-link";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { addFeedback, getUserByEmail } from "@/db/queries";

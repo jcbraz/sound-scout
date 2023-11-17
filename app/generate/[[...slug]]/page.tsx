@@ -23,8 +23,9 @@ const GeneratePage = async ({
 
   if (prompt === "" || !prompt || !userId) redirect("/");
 
-
   const credits = await getUserCredits(userId);
+  if (credits === undefined) redirect("/");
+  if (credits === 0) redirect("/early-access");
 
   return (
     <Section className="flex flex-col items-center lg:h-full">

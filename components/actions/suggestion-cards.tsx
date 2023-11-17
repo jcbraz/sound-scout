@@ -7,7 +7,7 @@ type SuggestionCardsProps = {
 };
 
 const SuggestionCards = (props: SuggestionCardsProps) => {
-  const pathToFollow = props.credits > 0 ? "/generate" : "/plans";
+  const pathToFollow = props.credits > 0 ? "/generate" : "/early-access";
 
   return (
     <form className="flex flex-col items-center justify-center space-y-6 text-neutral-900 w-full lg:max-w-2xl">
