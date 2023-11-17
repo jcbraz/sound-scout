@@ -23,7 +23,7 @@ const PromptInput = (props: PromptInputProps) => {
           },
         }
       : {
-          pathname: "/plans",
+          pathname: "/early-access",
           query: {
             userId: props.userId,
           },
