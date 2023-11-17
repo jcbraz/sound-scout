@@ -4,7 +4,7 @@ import { BasicTrackInfo } from "./types";
 import type { Episode, Track } from "@spotify/web-api-ts-sdk";
 import { addUser, getUserByEmail } from "@/db/queries";
 import { Session } from "next-auth";
-import { openai } from "./open-ai";
+import { openaiInit } from "./open-ai";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -39,6 +39,7 @@ export function filterTracks(ai_response: string): BasicTrackInfo[] {
 }
 
 export async function generateCustomTitle(ai_response: string) {
+  const openai = await openaiInit();
   const chat_completion = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo',
     messages: [
@@ -56,6 +57,8 @@ export async function generateCustomTitle(ai_response: string) {
 export async function generateNewSuggestionsForReinforcement(prompt: string, previousFilteredTracks: BasicTrackInfo[]): Promise<string | null> {
 
   const jointTracks = previousFilteredTracks.map(track => `${track['track_name']} - ${track['track_artist']}`).join(", ");
+
+  const openai = await openaiInit();
   const chat_completion = await openai.chat.completions.create({
     messages: [
       {

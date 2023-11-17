@@ -1,6 +1,11 @@
-import { OpenAI } from 'openai';
-import 'dotenv/config';
+'use server';
 
-export const runtime = 'edge';
+import OpenAI from 'openai';
 
-export const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY })
+
+export const openaiInit = async () => {
+    const openai = new OpenAI({
+        apiKey: process.env.OPEN_AI_KEY,
+    });
+    return openai;
+}

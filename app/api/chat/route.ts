@@ -1,9 +1,10 @@
-import { openai } from '@/lib/open-ai';
+import { openaiInit } from '@/lib/open-ai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 
 export async function POST(req: Request) {
     // Extract the `messages` from the body of the request
     const { prompt } = await req.json();
+    const openai = await openaiInit();
 
     // Request the OpenAI API for the response based on the prompt
     const chat_completion = await openai.chat.completions.create({
