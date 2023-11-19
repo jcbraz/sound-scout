@@ -16,9 +16,6 @@ export const promptExamples = [
   "Drake's best songs to chill"
 ] as const;
 
-export function checkTrackType(track: Track | Episode): track is Track {
-  return track as Track !== undefined && (track as Track).type === "track";
-}
 
 // Auxiliary functions for playlist generation
 export function filterTracks(ai_response: string): BasicTrackInfo[] {
@@ -52,33 +49,6 @@ export async function generateCustomTitle(ai_response: string) {
   });
 
   return chat_completion.choices.at(0)?.message.content;
-}
-
-export async function generateNewSuggestionsForReinforcement(prompt: string, previousFilteredTracks: BasicTrackInfo[]): Promise<string | null> {
-
-  const jointTracks = previousFilteredTracks.map(track => `${track['track_name']} - ${track['track_artist']}`).join(", ");
-
-  const openai = await openaiInit();
-  const chat_completion = await openai.chat.completions.create({
-    messages: [
-      {
-        role: "user",
-        content: `Imagine you are a creative dj. Someone asked you to make a playlist with 15 songs with the following requirements: ${prompt}. The restrictions for tracks for the tracks outputted are the following: all of the tracks should be available on Spotify. If any of the of track is not available on Spotify, it should not be outputted; Avoid outputting any other text than the actual track sequence; The output should contain nothing more than the sequence of labelled tracks with its name and the artist; For the name of the song, write only the tittle without any other information such as secondary artist (feat section). For the artist, write only the main artist and no other artist involved; The format should respect the following format:
-        1. (Track name) - (Track artist)
-        2. (Track name) - (Track artist)
-        ....
-        
-        The output songs should be different than the following songs:
-        ${jointTracks}
-        `,
-      }],
-    model: 'gpt-3.5-turbo',
-    max_tokens: 100,
-  })
-
-  const result = chat_completion.choices.at(0)?.message.content;
-  if (result === undefined) return null;
-  else return result;
 }
 
 

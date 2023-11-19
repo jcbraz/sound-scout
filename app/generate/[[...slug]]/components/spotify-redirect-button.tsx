@@ -7,7 +7,7 @@ type SpotifyRedirectButtonProps = {
 
 const SpotifyRedirectButton = (props: SpotifyRedirectButtonProps) => {
   return (
-    <Link href={props.url}>
+    <Link href={props.url} target="_blank">
       <Button
         className="w-full max-w-2xl mt-10 uppercase italic"
         type="submit"
