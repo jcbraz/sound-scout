@@ -1,6 +1,8 @@
 import { openaiInit } from '@/lib/open-ai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 
+export const runtime = 'edge';
+
 export async function POST(req: Request) {
     // Extract the `messages` from the body of the request
     const { prompt } = await req.json();
