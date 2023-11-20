@@ -80,7 +80,6 @@ async function checkPlaylistDuplicates(tracks: string[], playlistId: string) {
 async function addTracksToPlaylist(tracksURI: string[], playlistId: string) {
     try {
         const filteredTracks = await checkPlaylistDuplicates(tracksURI, playlistId);
-        console.log('filtered tracks', filteredTracks);
         await sdk.playlists.addItemsToPlaylist(playlistId, filteredTracks);
     } catch (error) {
         console.error('Error adding items to the playlist', error);
@@ -93,7 +92,7 @@ async function getPlaylistRecommendations(tracks: string[]) {
             seed_tracks: tracks
         });
 
-        return suggestions.tracks.map(track => track.id);
+        return suggestions.tracks.map(track => 'spotify:track:' + track.id);
 
     } catch (error) {
         console.error('Error getting recommendations', error);
@@ -108,7 +107,6 @@ async function reinforcePlaylistResults(desiredTrackNumber: number, playlist: Pl
         if (playlistTracksIds.length < desiredTrackNumber) {
 
             const newSuggestionsIds = playlistTracksIds.length < 5 ? await getPlaylistRecommendations(playlistTracksIds) : await getPlaylistRecommendations(playlistTracksIds.slice(0, 5));
-            console.log('new suggestions ids', newSuggestionsIds);
 
             if (!newSuggestionsIds) throw new Error('Error generating new tracks with reinforcing the playlist results');
 
