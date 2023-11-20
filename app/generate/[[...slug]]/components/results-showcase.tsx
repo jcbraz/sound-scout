@@ -5,7 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { generatePlaylist } from "@/lib/actions";
 import { useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
-import { addPlaylist, spendCredit } from "@/db/queries";
+import { addPlaylist, returnCredit, spendCredit } from "@/db/queries";
 import { signOut } from "next-auth/react";
 import SuggestionsSubmitButton from "./suggestions-submit-button";
 import URLSubmitButton from "./url-submit-button";
@@ -118,23 +118,39 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
             const content = messages
               .map((message) => message.content)
               .join("\n");
-            const givenURL = (
-              await generatePlaylist(content, props.user_prompt)
-            ).url;
-            if (givenURL) {
-              setUrl(givenURL);
-              addPlaylist({
-                id: givenURL.replace("https://open.spotify.com/playlist/", ""),
-                user_id: props.user_id,
-                prompt: props.user_prompt,
-                suggestion: content,
-              }).catch((err) => {
-                toast.toast({
-                  action: <ToastAction altText="Dismiss">Dismiss</ToastAction>,
-                  title: "Some trouble in our side",
-                  description: err.message,
-                  variant: "destructive",
+            try {
+              const givenURL = (
+                await generatePlaylist(content, props.user_prompt)
+              ).url;
+              if (givenURL) {
+                setUrl(givenURL);
+                addPlaylist({
+                  id: givenURL.replace(
+                    "https://open.spotify.com/playlist/",
+                    ""
+                  ),
+                  user_id: props.user_id,
+                  prompt: props.user_prompt,
+                  suggestion: content,
+                }).catch((err) => {
+                  toast.toast({
+                    action: (
+                      <ToastAction altText="Dismiss">Dismiss</ToastAction>
+                    ),
+                    title: "Some trouble in our side",
+                    description: err.message,
+                    variant: "destructive",
+                  });
                 });
+              }
+            } catch (error) {
+              returnCredit(props.user_id, props.user_credits as number);
+              toast.toast({
+                action: <ToastAction altText="Dismiss">Dismiss</ToastAction>,
+                title: "Some trouble in our side",
+                description:
+                  "Do not worry, your credit was returned. Please try again later.",
+                variant: "destructive",
               });
             }
           }}

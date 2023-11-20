@@ -106,6 +106,19 @@ export async function spendCredit(user_id: number, user_credits: number): Promis
     }
 }
 
+export async function returnCredit(user_id: number, user_credits: number): Promise<boolean> {
+    try {
+        const creditsSpending = await db.update(user).set({
+            credits: user_credits + 1
+        }).where(eq(user.id, user_id));
+        if (creditsSpending && creditsSpending.rowsAffected === 1) return true;
+        else throw new Error('Bad User update data!');
+    } catch (error) {
+        console.error('Error updating database: ', error);
+        return false;
+    }
+}
+
 export async function addCredits(user_id: number, credit_amount: number): Promise<boolean> {
     const credit_query = await db.select({
         credits: user.credits

@@ -2,7 +2,7 @@
 
 import { openaiInit } from "./open-ai";
 import { Playlist, BasicTrackInfo } from "./types";
-import { checkTrackType, filterTracks, generateCustomTitle, generateNewSuggestionsForReinforcement } from "./utils";
+import { filterTracks, generateCustomTitle } from "./utils";
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
 export async function generateTrackSuggestionsAsText(user_prompt: string) {
@@ -66,42 +66,54 @@ async function createPlaylist(title: string, prompt: string) {
     }
 }
 
+async function checkPlaylistDuplicates(tracks: string[], playlistId: string) {
+    try {
+        const playlistTracks = await sdk.playlists.getPlaylistItems(playlistId);
+        const playlistTracksIds = playlistTracks.items.map(item => item.track.id);
+
+        return tracks.filter(track => !playlistTracksIds.includes(track));
+    } catch (error) {
+        console.error('Error checking playlist duplicates', error);
+    }
+}
+
 async function addTracksToPlaylist(tracksURI: string[], playlistId: string) {
     try {
-        await sdk.playlists.addItemsToPlaylist(playlistId, tracksURI);
+        const filteredTracks = await checkPlaylistDuplicates(tracksURI, playlistId);
+        await sdk.playlists.addItemsToPlaylist(playlistId, filteredTracks);
     } catch (error) {
         console.error('Error adding items to the playlist', error);
     }
 }
 
-async function reinforcePlaylistResults(desiredTrackNumber: number, prompt: string, playlist: Playlist) {
+async function getPlaylistRecommendations(tracks: string[]) {
     try {
-        const playlistTracks = await sdk.playlists.getPlaylistItems(playlist.id);
+        const suggestions = await sdk.recommendations.get({
+            seed_tracks: tracks
+        });
 
-        if (playlistTracks.items.length < desiredTrackNumber) {
+        return suggestions.tracks.map(track => 'spotify:track:' + track.id);
 
-            let previousTracksInfo: BasicTrackInfo[] = [];
+    } catch (error) {
+        console.error('Error getting recommendations', error);
+    }
+}
 
-            playlistTracks.items.map(item => {
-                if (checkTrackType(item.track)) {
-                    previousTracksInfo.push({
-                        track_name: item.track.name,
-                        track_artist: item.track.artists.at(0)?.name
-                    } as BasicTrackInfo);
-                }
-            });
+async function reinforcePlaylistResults(desiredTrackNumber: number, playlist: Playlist) {
+    try {
 
-            const newTracks = await generateNewSuggestionsForReinforcement(prompt, previousTracksInfo);
+        const playlistTracksIds = (await sdk.playlists.getPlaylistItems(playlist.id)).items.map(item => item.track.id);
 
-            if (!newTracks) throw new Error('Error generating new tracks with reinforcing the playlist results');
+        if (playlistTracksIds.length < desiredTrackNumber) {
+
+            const newSuggestionsIds = playlistTracksIds.length < 5 ? await getPlaylistRecommendations(playlistTracksIds) : await getPlaylistRecommendations(playlistTracksIds.slice(0, 5));
+
+            if (!newSuggestionsIds) throw new Error('Error generating new tracks with reinforcing the playlist results');
 
             try {
-                const newTracksInfo = filterTracks(newTracks);
-                const newTracksURI = await getTracksURI(newTracksInfo);
-                if (newTracksURI === undefined || newTracksURI.length == 0) throw new Error('Error getting tracks ids from the new tracks when reinforcing the playlist results');
-                await addTracksToPlaylist(newTracksURI, playlist.id);
+                await addTracksToPlaylist(newSuggestionsIds, playlist.id);
             } catch (error) {
-                console.error(error);
+                throw new Error('Error adding tracks to the playlist');
             }
         }
     } catch (error) {
@@ -125,7 +137,7 @@ export async function generatePlaylist(ai_response: string, user_prompt: string)
         }
 
         await addTracksToPlaylist(tracksURI, new_playlist.id);
-        await reinforcePlaylistResults(filteredTracks.length, user_prompt, new_playlist);
+        await reinforcePlaylistResults(15, new_playlist);
 
         return new_playlist;
     } catch (error) {
