@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import PromptShowcase from "./components/prompt-showcase";
 import ResultsShowcase from "./components/results-showcase";
 import { getUserCredits } from "@/db/queries";
+import { Suspense } from "react";
+import { Icons } from "@/components/ui/icons";
 
 type SearchParamsType = {
   prompt: string;
@@ -31,11 +33,13 @@ const GeneratePage = async ({
     <Section className="flex flex-col items-center lg:h-full">
       <AuthenticatedDropdownMenu session={session} />
       <PromptShowcase prompt={prompt} />
-      <ResultsShowcase
-        user_credits={credits}
-        user_id={userId}
-        user_prompt={prompt}
-      />
+      <Suspense fallback={<Icons.spinner className="w-8 h-8" />}>
+        <ResultsShowcase
+          user_credits={credits}
+          user_id={userId}
+          user_prompt={prompt}
+        />
+      </Suspense>
     </Section>
   );
 };

@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 
-const useTypewriter = (text: string, speed = 50) => {
+const useTypewriter = (text: string, speed = 50, flag: boolean) => {
   const [displayText, setDisplayText] = useState<string>("");
   const i = useRef(0);
 
   useEffect(() => {
     const typingInterval = setInterval(() => {
-      if (i.current <= text.length-1) {
+      if (i.current <= text.length - 1) {
         setDisplayText((prevText) => prevText + text.charAt(i.current));
         i.current++;
       } else {
