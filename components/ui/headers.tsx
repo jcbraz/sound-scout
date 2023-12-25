@@ -4,7 +4,7 @@ import { Logo } from "./logo";
 import useTypewriter from "./type-writter";
 
 const Headers = () => {
-  const displayText = useTypewriter("t/he spotify playlist engine", 50);
+  const displayText = useTypewriter("t/he spotify playlist engine", 50, true);
 
   return (
     <div className="flex flex-col items-center justify-center space-y-6">

@@ -10,6 +10,7 @@ import { signOut } from "next-auth/react";
 import SuggestionsSubmitButton from "./suggestions-submit-button";
 import URLSubmitButton from "./url-submit-button";
 import SpotifyRedirectButton from "./spotify-redirect-button";
+import useTypewriter from "@/components/ui/type-writter";
 
 type ResultsShowcaseProps = {
   user_credits: number | undefined;
@@ -19,9 +20,13 @@ type ResultsShowcaseProps = {
 
 const ResultsShowcase = (props: ResultsShowcaseProps) => {
   const [isSuggestionsSubmitted, setSubmitState] = useState<boolean>(false);
-  console.log(isSuggestionsSubmitted);
   const [url, setUrl] = useState<string | null>(null);
   const toast = useToast();
+  const postSubmittionLabel = useTypewriter(
+    "W/e are generating your playlist. This might take a while.",
+    60,
+    isSuggestionsSubmitted
+  );
 
   const { messages, isLoading, handleSubmit } = useChat({
     api: "/api/chat",
@@ -86,7 +91,7 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
         className="flex flex-col justify-center items-center space-y-10 max-w-xl"
         onSubmit={handleSubmit}
       >
-        {!isSuggestionsSubmitted && (
+        {!isSuggestionsSubmitted ? (
           <>
             <SuggestionsSubmitButton isLoading={isLoading} />
             <h6 className="text-xs italic max-w-sm text-center">
@@ -95,6 +100,10 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
               credit will be returned.
             </h6>
           </>
+        ) : (
+          <h5 className="lg:text-xl text-base font-medium text-transparent bg-clip-text bg-gradient-to-r from-c_grey to-neutral-600 italic max-w-2xl text-center mt-10">
+            {postSubmittionLabel}
+          </h5>
         )}
         <div className="grid lg:grid-cols-2 grid-cols-1 lg:space-y-2 space-y-4 lg:gap-x-10 lg:grid-flow-row lg:text-justify text-center lg:max-w-2xl max-w-sm mt-14">
           {messages.map((message) =>
