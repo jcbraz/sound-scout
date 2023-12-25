@@ -1,7 +1,15 @@
 "use client";
 
-import { CreditCard, FileClock, Flag, LogOut, UserCheck } from "lucide-react";
-import { Button } from "./button";
+import {
+  Bug,
+  CreditCard,
+  FileClock,
+  Flag,
+  LogOut,
+  UserCheck,
+  UserCircle2,
+} from "lucide-react";
+import { Button } from "../../../components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +18,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./dropdown-menu";
+} from "../../../components/ui/dropdown-menu";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import type { Session } from "next-auth";
@@ -43,12 +51,11 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuGroup>
             <DropdownMenuItem>
               <FileClock className="mr-2 h-4 w-4" />
               <Link
                 href={{
-                  pathname: "/history",
+                  pathname: "/menu/history",
                   query: {
                     email: props.session ? props.session.user?.email : "",
                   },
@@ -58,22 +65,27 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
                 <span>Playlist History</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            {/* <DropdownMenuItem>
               <CreditCard className="mr-2 h-4 w-4" />
               <Link href={{
-                pathname: "/plans",
+                pathname: "/menu/plans",
                 query: {
                   userId: props.session ? props.session.user?.name : "",
                 }
               }} passHref>
                 <span>Credit Plans</span>
               </Link>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
+            </DropdownMenuItem> */}
+          {/* <DropdownMenuItem>
+            <UserCircle2 className="mr-2 h-4 w-4" />
+            <Link href="/menu/settings" passHref>
+              <span>Account</span>
+            </Link>
+          </DropdownMenuItem> */}
           <DropdownMenuItem>
-            <Flag className="mr-2 h-4 w-4" />
-            <Link href="/settings" passHref>
-              <span>Issues and Account</span>
+            <Bug className="mr-2 h-4 w-4" />
+            <Link href="/feedback" passHref>
+              <span>Report a Bug</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => signOut()}>

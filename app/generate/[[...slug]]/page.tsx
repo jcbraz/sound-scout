@@ -1,4 +1,4 @@
-import AuthenticatedDropdownMenu from "@/components/ui/authenticated-dropdown-menu";
+import AuthenticatedDropdownMenu from "@/app/menu/components/authenticated-dropdown-menu";
 import { Section } from "@/components/ui/section";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";

@@ -9,7 +9,9 @@ export const user = mysqlTable('user', {
   last_name: varchar('last_name', { length: 50 }),
   credits: smallint('credits').notNull().default(5),
   created_at: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull()
-});
+}, (users) => ({
+  emailIndex: index('email_idx').on(users.email)
+  }));
 
 export const playlist = mysqlTable('playlist', {
   id: varchar('id', { length: 30 }).primaryKey(), // id == url => always unique
