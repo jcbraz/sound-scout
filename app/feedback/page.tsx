@@ -2,9 +2,7 @@ import { Section } from "@/components/ui/section";
 import MainPageLink from "../../components/ui/main-page-link";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { addFeedback, getUserByEmail } from "@/db/queries";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { getUserByEmail } from "@/db/queries";
 import FeedbackForm from "./components/feedback-form";
 
 const FeedbackPage = async () => {

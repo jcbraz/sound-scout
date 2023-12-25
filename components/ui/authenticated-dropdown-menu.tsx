@@ -48,7 +48,7 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
               <FileClock className="mr-2 h-4 w-4" />
               <Link
                 href={{
-                  pathname: "/history",
+                  pathname: "/menu/history",
                   query: {
                     email: props.session ? props.session.user?.email : "",
                   },
@@ -61,7 +61,7 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
             <DropdownMenuItem>
               <CreditCard className="mr-2 h-4 w-4" />
               <Link href={{
-                pathname: "/plans",
+                pathname: "/menu/plans",
                 query: {
                   userId: props.session ? props.session.user?.name : "",
                 }
@@ -72,7 +72,7 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
           </DropdownMenuGroup>
           <DropdownMenuItem>
             <Flag className="mr-2 h-4 w-4" />
-            <Link href="/settings" passHref>
+            <Link href="/menu/settings" passHref>
               <span>Issues and Account</span>
             </Link>
           </DropdownMenuItem>
