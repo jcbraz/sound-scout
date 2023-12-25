@@ -3,7 +3,7 @@ import { Section } from "@/components/ui/section";
 import Headers from "@/components/ui/headers";
 import PromptInput from "@/components/actions/prompt-input";
 import SuggestionCards from "@/components/actions/suggestion-cards";
-import AuthenticatedDropdownMenu from "@/components/ui/authenticated-dropdown-menu";
+import AuthenticatedDropdownMenu from "@/app/menu/components/authenticated-dropdown-menu";
 import { getServerSession } from "next-auth";
 import { checkUserRegister } from "@/lib/utils";
 import { toast } from "@/components/ui/use-toast";
