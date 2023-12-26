@@ -11,7 +11,7 @@ const SpotifyRedirectButton = (props: SpotifyRedirectButtonProps) => {
   const handleClick = useCallback(() => setClicked(true), []);
 
   return (
-    <a href={props.url} target="_blank">
+    <a href={props.url} target="_blank" rel="noreferrer">
       <Button
         className="w-full lg:max-w-2xl max-w-md uppercase italic"
         disabled={wasClicked}
