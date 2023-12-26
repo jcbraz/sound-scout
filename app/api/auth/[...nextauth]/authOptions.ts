@@ -23,7 +23,7 @@ const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, account }: { token: JWT; account: Account | null }) {
 
-      const isNewSession = !!account;
+      const isNewSession = Boolean(account);
       if (isNewSession) {
         return {
           ...token,
@@ -47,7 +47,7 @@ const authOptions: AuthOptions = {
 
       return refreshedToken;
     },
-    async session({ session, token }: { session: any; token: any }) {
+    session({ session, token }: { session: any; token: any }) {
       const user: AuthUser = {
         ...session.user,
         access_token: token.access_token,

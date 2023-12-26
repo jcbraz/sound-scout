@@ -7,6 +7,7 @@ import ResultsShowcase from "./components/results-showcase";
 import { getUserCredits } from "@/db/queries";
 import { Suspense } from "react";
 import { Icons } from "@/components/ui/icons";
+import MainPageLink from "@/components/ui/main-page-link";
 
 type SearchParamsType = {
   prompt: string;
@@ -31,6 +32,7 @@ const GeneratePage = async ({
 
   return (
     <Section className="flex flex-col items-center lg:h-full">
+      <MainPageLink />
       <AuthenticatedDropdownMenu session={session} />
       <PromptShowcase prompt={prompt} />
       <Suspense fallback={<Icons.spinner className="w-8 h-8" />}>

@@ -3,14 +3,14 @@
 import { useChat } from "ai/react";
 import { useToast } from "@/components/ui/use-toast";
 import { generatePlaylist } from "@/lib/actions";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
 import { addPlaylist, returnCredit, spendCredit } from "@/db/queries";
 import { signOut } from "next-auth/react";
 import SuggestionsSubmitButton from "./suggestions-submit-button";
 import URLSubmitButton from "./url-submit-button";
-import SpotifyRedirectButton from "./spotify-redirect-button";
-import useTypewriter from "@/components/ui/type-writter";
+import useTypewriter from "@/components/ui/use-type-writter";
+import PostGenerationActions from "./post-generation-actions";
 
 type ResultsShowcaseProps = {
   user_credits: number | undefined;
@@ -21,11 +21,11 @@ type ResultsShowcaseProps = {
 const ResultsShowcase = (props: ResultsShowcaseProps) => {
   const [isSuggestionsSubmitted, setSubmitState] = useState<boolean>(false);
   const [url, setUrl] = useState<string | null>(null);
+  const handleSignOut = useCallback(() => signOut(), []);
   const toast = useToast();
   const postSubmittionLabel = useTypewriter(
     "W/e are generating your playlist. This might take a while.",
-    60,
-    isSuggestionsSubmitted
+    60
   );
 
   const { messages, isLoading, handleSubmit } = useChat({
@@ -49,7 +49,7 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
             if (res === false) {
               toast.toast({
                 action: (
-                  <ToastAction altText="Dismiss" onClick={() => signOut()}>
+                  <ToastAction altText="Dismiss" onClick={handleSignOut}>
                     Sign Out
                   </ToastAction>
                 ),
@@ -72,7 +72,7 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
     onError: (err) => {
       toast.toast({
         action: (
-          <ToastAction altText="Dismiss" onClick={() => signOut()}>
+          <ToastAction altText="Dismiss" onClick={handleSignOut}>
             Sign Out
           </ToastAction>
         ),
@@ -153,7 +153,9 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
                 });
               }
             } catch (error) {
-              returnCredit(props.user_id, props.user_credits as number);
+              returnCredit(props.user_id, props.user_credits as number)
+                .then(() => console.log("Credit returned"))
+                .catch((err) => console.log(err));
               toast.toast({
                 action: <ToastAction altText="Dismiss">Dismiss</ToastAction>,
                 title: "Some trouble in our side",
@@ -166,9 +168,9 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
           className="mt-14"
         >
           <h4 className="italic lg:text-lg text-base">
-            Looks good. Let's get you access to the playlist.
+            Looks good. Let&apos;s get you access to the playlist.
           </h4>
-          {url ? <SpotifyRedirectButton url={url} /> : <URLSubmitButton />}
+          {url ? <PostGenerationActions url={url} /> : <URLSubmitButton />}
         </form>
       )}
     </>

@@ -1,6 +1,5 @@
-import { relations, sql } from "drizzle-orm";
+import { relations, sql, InferSelectModel, InferInsertModel } from "drizzle-orm";
 import { index, int, mysqlTable, serial, timestamp, varchar, boolean, smallint, decimal } from "drizzle-orm/mysql-core";
-import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 
 export const user = mysqlTable('user', {
   id: serial('id').primaryKey(),
@@ -11,7 +10,7 @@ export const user = mysqlTable('user', {
   created_at: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`).notNull()
 }, (users) => ({
   emailIndex: index('email_idx').on(users.email)
-  }));
+}));
 
 export const playlist = mysqlTable('playlist', {
   id: varchar('id', { length: 30 }).primaryKey(), // id == url => always unique

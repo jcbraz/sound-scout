@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-const useTypewriter = (text: string, speed = 50, flag: boolean) => {
+const useTypewriter = (text: string, speed = 50) => {
   const [displayText, setDisplayText] = useState<string>("");
   const i = useRef(0);
 

@@ -1,7 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { BasicTrackInfo } from "./types";
-import type { Episode, Track } from "@spotify/web-api-ts-sdk";
 import { addUser, getUserByEmail } from "@/db/queries";
 import { Session } from "next-auth";
 import { openaiInit } from "./open-ai";
@@ -24,7 +23,7 @@ export function filterTracks(ai_response: string): BasicTrackInfo[] {
   let artist_delimiter_pattern = /ft\.|,|\(\s?feat/;
 
   for (let line of ai_response.split("\n")) {
-    const match = line.match(pattern);
+    const match = pattern.exec(line);
     if (match) {
       let track_name = match[1];
       let track_artist = match[2].split(artist_delimiter_pattern)[0];

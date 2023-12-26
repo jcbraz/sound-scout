@@ -5,12 +5,12 @@ import { Playlist, BasicTrackInfo } from "./types";
 import { filterTracks, generateCustomTitle } from "./utils";
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
-export async function generateTrackSuggestionsAsText(user_prompt: string) {
+export async function generateTrackSuggestionsAsText(userPrompt: string) {
     const openai = await openaiInit();
     const chat_completion = await openai.chat.completions.create({
         messages: [{
             role: 'user',
-            content: `Imagine you're a creative dj. Someone asked you to make a playlist with 15 to 20 songs with the following requirements: ${user_prompt}. The restrictions for tracks for the tracks outputted are the following: all of the tracks should be available on Spotify. If any of the of track is not available on Spotify, it should not be outputted; Avoid outputting any other text than the actual track sequence; The output should contain nothing more than the sequence of labelled tracks with its name and the artist; For the name of the song, write only the tittle without any other information such as secondary artist (feat section). For the artist, write only the main artist and no other artist involved; The format should respect the following format:
+            content: `Imagine you're a creative dj. Someone asked you to make a playlist with 15 to 20 songs with the following requirements: ${userPrompt}. The restrictions for tracks for the tracks outputted are the following: all of the tracks should be available on Spotify. If any of the of track is not available on Spotify, it should not be outputted; Avoid outputting any other text than the actual track sequence; The output should contain nothing more than the sequence of labelled tracks with its name and the artist; For the name of the song, write only the tittle without any other information such as secondary artist (feat section). For the artist, write only the main artist and no other artist involved; The format should respect the following format:
         1. (Track name) - (Track artist)
         2. (Track name) - (Track artist)
         ....`,
@@ -121,18 +121,18 @@ async function reinforcePlaylistResults(desiredTrackNumber: number, playlist: Pl
     }
 }
 
-export async function generatePlaylist(ai_response: string, user_prompt: string) {
+export async function generatePlaylist(aiResponse: string, userPrompt: string) {
     try {
-        const playlist_title = (await generateCustomTitle(ai_response))?.replace('"', "").replace('"', "") || 'Playlist';
-        const filteredTracks = filterTracks(ai_response);
+        const playlist_title = (await generateCustomTitle(aiResponse))?.replace('"', "").replace('"', "") || 'Playlist';
+        const filteredTracks = filterTracks(aiResponse);
 
-        const new_playlist = await createPlaylist(playlist_title, user_prompt);
+        const new_playlist = await createPlaylist(playlist_title, userPrompt);
         if (!new_playlist) {
             throw new Error('Error creating playlist');
         }
 
         const tracksURI = await getTracksURI(filteredTracks);
-        if (!tracksURI || tracksURI.length == 0) {
+        if (!tracksURI || tracksURI.length === 0) {
             throw new Error('Error getting tracks ids from the filtered tracks');
         }
 

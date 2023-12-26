@@ -13,7 +13,7 @@ interface PromptButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
 const PromptButton = forwardRef<HTMLButtonElement, PromptButtonProps>(
   ({ className, ...props }, ref) => {
     const pathToFollow =
-      props.path == "/generate"
+      props.path === "/generate"
         ? {
             pathname: props.path,
             query: {
