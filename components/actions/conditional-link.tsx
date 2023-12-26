@@ -56,7 +56,7 @@ const ConditionalLinkButton = ({
 );
 
 const ConditionalLink = React.forwardRef<HTMLDivElement, ConditionalLinkProps>(
-  ({ className, ...props }, ref) => {
+  ({ ...props }, ref) => {
     return (
       <div ref={ref}>
         {props.disabled ? (

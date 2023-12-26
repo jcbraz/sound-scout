@@ -1,19 +1,10 @@
 "use client";
 
-import {
-  Bug,
-  CreditCard,
-  FileClock,
-  Flag,
-  LogOut,
-  UserCheck,
-  UserCircle2,
-} from "lucide-react";
+import { Bug, FileClock, LogOut, UserCheck } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -22,12 +13,15 @@ import {
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import type { Session } from "next-auth";
+import { useCallback } from "react";
 
 type AuthenticatedDropdownMenuProps = {
   session: Session | null;
 };
 
 const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
+  const handleSignOut = useCallback(() => signOut(), []);
+
   return (
     <div
       className={
@@ -51,21 +45,21 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <FileClock className="mr-2 h-4 w-4" />
-              <Link
-                href={{
-                  pathname: "/menu/history",
-                  query: {
-                    email: props.session ? props.session.user?.email : "",
-                  },
-                }}
-                passHref
-              >
-                <span>Playlist History</span>
-              </Link>
-            </DropdownMenuItem>
-            {/* <DropdownMenuItem>
+          <DropdownMenuItem>
+            <FileClock className="mr-2 h-4 w-4" />
+            <Link
+              href={{
+                pathname: "/menu/history",
+                query: {
+                  email: props.session ? props.session.user?.email : "",
+                },
+              }}
+              passHref
+            >
+              <span>Playlist History</span>
+            </Link>
+          </DropdownMenuItem>
+          {/* <DropdownMenuItem>
               <CreditCard className="mr-2 h-4 w-4" />
               <Link href={{
                 pathname: "/menu/plans",
@@ -88,7 +82,7 @@ const AuthenticatedDropdownMenu = (props: AuthenticatedDropdownMenuProps) => {
               <span>Report a Bug</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => signOut()}>
+          <DropdownMenuItem onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" /> Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -1,21 +1,27 @@
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { useCallback, useState } from "react";
 
 type SpotifyRedirectButtonProps = {
   url: string;
 };
 
 const SpotifyRedirectButton = (props: SpotifyRedirectButtonProps) => {
+  const [wasClicked, setClicked] = useState<boolean>(false);
+
+  const handleClick = useCallback(() => setClicked(true), []);
+
   return (
-    <Button
-      className="w-full max-w-2xl mt-10 uppercase italic"
-      type="submit"
-      variant="highlightGradient"
-    >
-      <Link href={props.url} target="_blank">
-        View On Spotify
-      </Link>
-    </Button>
+    <a href={props.url} target="_blank">
+      <Button
+        className="w-full lg:max-w-2xl max-w-md uppercase italic"
+        disabled={wasClicked}
+        type="submit"
+        variant="highlightGradient"
+        onClick={handleClick}
+      >
+        {!wasClicked ? "View On Spotify" : "Spotify was opened!"}
+      </Button>
+    </a>
   );
 };
 

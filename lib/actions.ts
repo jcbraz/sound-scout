@@ -132,7 +132,7 @@ export async function generatePlaylist(ai_response: string, user_prompt: string)
         }
 
         const tracksURI = await getTracksURI(filteredTracks);
-        if (!tracksURI || tracksURI.length == 0) {
+        if (!tracksURI || tracksURI.length === 0) {
             throw new Error('Error getting tracks ids from the filtered tracks');
         }
 

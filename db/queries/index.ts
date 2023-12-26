@@ -1,6 +1,6 @@
 'use server';
 
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "..";
 import { user, playlist, feedback } from "../schema";
 import type { InsertFeedback, InsertPlaylist, InsertUser, SelectPlaylist, SelectUser } from '../schema'
@@ -45,7 +45,7 @@ export async function addUser(user_values: InsertUser): Promise<number | null> {
     try {
         const user_insertion_response = await db.insert(user).values(user_values);
         if (user_insertion_response && user_insertion_response.insertId !== undefined)
-            return +user_insertion_response.insertId;
+            return Number(user_insertion_response.insertId);
         else
             throw new Error('Bad User insertion data!');
     } catch (error) {
@@ -58,7 +58,7 @@ export async function addPlaylist(playlist_values: InsertPlaylist): Promise<numb
     try {
         const playlist_insertion_response = await db.insert(playlist).values(playlist_values);
         if (playlist_insertion_response && playlist_insertion_response.insertId !== undefined) {
-            return +playlist_insertion_response.insertId;
+            return Number(playlist_insertion_response.insertId);
         }
         else
             throw new Error('Bad Playlist insertion data!');
@@ -72,7 +72,7 @@ export async function addFeedback(feedback_values: InsertFeedback): Promise<numb
     try {
         const feedback_insertion_response = await db.insert(feedback).values(feedback_values);
         if (feedback_insertion_response && feedback_insertion_response.insertId !== undefined)
-            return +feedback_insertion_response.insertId;
+            return Number(feedback_insertion_response.insertId);
         else
             throw new Error('Bad Feedback insertion data!');
     } catch (error) {

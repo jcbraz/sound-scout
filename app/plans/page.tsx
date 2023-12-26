@@ -1,23 +1,22 @@
-import AuthenticatedDropdownMenu from "@/app/menu/components/authenticated-dropdown-menu";
-import { Section } from "@/components/ui/section";
+// import AuthenticatedDropdownMenu from "@/app/menu/components/authenticated-dropdown-menu";
+// import { Section } from "@/components/ui/section";
+// import MainPageLink from "../../components/ui/main-page-link";
+// import PlansShowcase from "./components/plans-showcase";
+// import { getPlans } from "@/db/queries";
+// import PlansHeaders from "./components/plans-headers";
 import { getServerSession } from "next-auth";
-import MainPageLink from "../../components/ui/main-page-link";
-import PlansShowcase from "./components/plans-showcase";
-import { getPlans } from "@/db/queries";
-import PlansHeaders from "./components/plans-headers";
 import { redirect } from "next/navigation";
 
 type SearchParamsType = {
   userId: number;
 };
 
-const PlansPage = async ({
-  searchParams,
-}: {
-  searchParams: SearchParamsType;
+const PlansPage = async ({}: // searchParams,
+{
+  // searchParams: SearchParamsType;
 }) => {
   const session = await getServerSession();
-  const isUserSignedIn = !!session?.user;
+  const isUserSignedIn = Boolean(session?.user);
 
   if (!isUserSignedIn) redirect("/auth/signin");
   else redirect("/");

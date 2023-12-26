@@ -1,7 +1,7 @@
 "use client";
 
 import { Logo } from "./logo";
-import useTypewriter from "./type-writter";
+import useTypewriter from "./use-type-writter";
 
 const Headers = () => {
   const displayText = useTypewriter("t/he spotify playlist engine", 50, true);
