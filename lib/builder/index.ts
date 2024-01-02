@@ -102,7 +102,7 @@ class SpotifyPlaylist implements PlaylistBuilder {
     async produceTracks(): Promise<void> {
         try {
             const aiSuggestion = this.getAiSuggestion();
-            if (!aiSuggestion) throw new Error('Missing track list');
+            if (!aiSuggestion || aiSuggestion.length === 0) throw new Error('Missing track list');
             const trackIds = await Promise.all(aiSuggestion.map(track => this.produceTrackURI(track)));
             const filteredTrackIds = trackIds.filter(id => id !== null).filter(function (elem, index, self) {
                 return index === self.indexOf(elem);
@@ -119,14 +119,14 @@ class SpotifyPlaylist implements PlaylistBuilder {
             if (!id) throw new Error('Missing playlist id');
 
             const currentTracksIds = this.getCurrentTracks();
-            if (!currentTracksIds) throw new Error('Missing current tracks ids');
+            if (!currentTracksIds || currentTracksIds.length === 0) throw new Error('Missing current tracks ids');
 
             if (currentTracksIds.length < this.desiredTrackSize) {
 
-                const newSuggestionsIds = currentTracksIds.length < 5 ? await sdk.recommendations.get({
-                    seed_tracks: currentTracksIds
-                }) : await sdk.recommendations.get({
-                    seed_tracks: currentTracksIds.slice(0, 5)
+                console.log('Generating new suggestions with the current tracks', currentTracksIds);
+
+                const newSuggestionsIds = await sdk.recommendations.get({
+                    seed_tracks: currentTracksIds.map(elem => elem?.replace('spotify:track:', "")).slice(0, 5)
                 });
 
                 if (!newSuggestionsIds) throw new Error('Error generating new tracks with reinforcing the playlist results');
@@ -212,7 +212,7 @@ export class OpenAIPlaylistBuilder extends SpotifyPlaylist implements Suggestion
 
         const title = chat_completion.choices.at(0)?.message.content;
         if (!title || title === undefined) console.error('Error from OpenAI generating title');
-        else super.setTitle(title);
+        else super.setTitle(title.replace(/['"]+/g, ''));
     }
 
 
