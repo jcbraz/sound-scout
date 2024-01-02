@@ -3,7 +3,7 @@ import { BasicTrackInfo, Playlist } from "../types";
 import sdk from '@/lib/spotify-sdk/ClientInstance';
 
 interface SuggestionsBuilder {
-    produceAISuggestions(): Promise<void>;
+    produceAISuggestions(): void;
     produceTitle(): Promise<void>;
     produceResults(): Promise<Playlist | null>
 }
@@ -18,10 +18,10 @@ interface PlaylistBuilder {
 
 class SpotifyPlaylist implements PlaylistBuilder {
     private id: string | null;
-    private description: string;
+    private readonly description: string;
     private title: string | null;
     private aiSuggestion: BasicTrackInfo[] | null;
-    private desiredTrackSize: number;
+    private readonly desiredTrackSize: number;
     private currentTracks: string[] | null;
     private currentSuggestions: string[] | null;
 
@@ -123,8 +123,6 @@ class SpotifyPlaylist implements PlaylistBuilder {
 
             if (currentTracksIds.length < this.desiredTrackSize) {
 
-                console.log('Generating new suggestions with the current tracks', currentTracksIds);
-
                 const newSuggestionsIds = await sdk.recommendations.get({
                     seed_tracks: currentTracksIds.map(elem => elem?.replace('spotify:track:', "")).slice(0, 5)
                 });
@@ -144,19 +142,19 @@ class SpotifyPlaylist implements PlaylistBuilder {
             if (!currentTracks) throw new Error('Missing current tracks');
             const currentSuggestions = this.currentSuggestions;
             if (!currentSuggestions) throw new Error('Missing current suggestions');
-            const id = this.getId();
-            if (!id) throw new Error('Missing playlist id');
+            const currentId = this.getId();
+            if (!currentId) throw new Error('Missing playlist id');
 
             try {
-                await sdk.playlists.addItemsToPlaylist(id, currentTracks);
+                await sdk.playlists.addItemsToPlaylist(currentId, currentTracks);
             } catch (error) {
                 throw new Error('Error adding tracks to the playlist');
             }
             try {
-                await sdk.playlists.addItemsToPlaylist(id, currentSuggestions);
+                await sdk.playlists.addItemsToPlaylist(currentId, currentSuggestions);
                 return {
-                    id: id,
-                    url: `https://open.spotify.com/playlist/${id}`,
+                    id: currentId,
+                    url: `https://open.spotify.com/playlist/${currentId}`,
                 } as Playlist;
             } catch (error) {
                 throw new Error('Error adding suggestions to the playlist');
@@ -171,8 +169,8 @@ class SpotifyPlaylist implements PlaylistBuilder {
 
 export class OpenAIPlaylistBuilder extends SpotifyPlaylist implements SuggestionsBuilder {
 
-    private userPrompt: string;
-    private aiReturnedContent: string;
+    private readonly userPrompt: string;
+    private readonly aiReturnedContent: string;
 
     constructor(description: string, desiredTrackSize: number, userPrompt: string, aiReturnedContent: string) {
         super(description, desiredTrackSize);
@@ -180,16 +178,16 @@ export class OpenAIPlaylistBuilder extends SpotifyPlaylist implements Suggestion
         this.aiReturnedContent = aiReturnedContent;
     }
 
-    async produceAISuggestions(): Promise<void> {
-        let trackList: BasicTrackInfo[] = [];
-        let pattern = /\s?\d+\.\s(.+)\s-\s(.+)/;
-        let artist_delimiter_pattern = /ft\.|,|\(\s?feat/;
+    produceAISuggestions(): void {
+        const trackList: BasicTrackInfo[] = [];
+        const pattern = /\s?\d+\.\s(.+)\s-\s(.+)/;
+        const artist_delimiter_pattern = /ft\.|,|\(\s?feat/;
 
-        for (let line of this.aiReturnedContent.split("\n")) {
+        for (const line of this.aiReturnedContent.split("\n")) {
             const match = pattern.exec(line);
             if (match) {
-                let track_name = match[1];
-                let track_artist = match[2].split(artist_delimiter_pattern)[0];
+                const track_name = match[1];
+                const track_artist = match[2].split(artist_delimiter_pattern)[0];
                 trackList.push({ track_name, track_artist });
             }
         }
