@@ -2,7 +2,6 @@
 
 import { useChat } from "ai/react";
 import { useToast } from "@/components/ui/use-toast";
-import { generatePlaylist } from "@/lib/actions";
 import { useCallback, useState } from "react";
 import { ToastAction } from "@/components/ui/toast";
 import { addPlaylist, returnCredit, spendCredit } from "@/db/queries";
@@ -11,6 +10,7 @@ import SuggestionsSubmitButton from "./suggestions-submit-button";
 import URLSubmitButton from "./url-submit-button";
 import useTypewriter from "@/components/ui/use-type-writter";
 import PostGenerationActions from "./post-generation-actions";
+import { invockeOpenAIPlaylistBuilder } from "@/lib/actions";
 
 type ResultsShowcaseProps = {
   user_credits: number | undefined;
@@ -129,8 +129,13 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
               .join("\n");
             try {
               const givenURL = (
-                await generatePlaylist(content, props.user_prompt)
-              ).url;
+                await invockeOpenAIPlaylistBuilder(
+                  props.user_prompt,
+                  15,
+                  props.user_prompt,
+                  content
+                )
+              )?.url;
               if (givenURL) {
                 setUrl(givenURL);
                 addPlaylist({
