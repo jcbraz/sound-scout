@@ -11,6 +11,7 @@ import URLSubmitButton from "./url-submit-button";
 import useTypewriter from "@/components/ui/use-type-writter";
 import PostGenerationActions from "./post-generation-actions";
 import { invockeOpenAIPlaylistBuilder } from "@/lib/actions";
+import FAQRedirectButton from "./faq-redirect-button";
 
 type ResultsShowcaseProps = {
   user_credits: number | undefined;
@@ -105,7 +106,7 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
             {postSubmittionLabel}
           </h5>
         )}
-        <div className="grid lg:grid-cols-2 grid-cols-1 lg:space-y-2 space-y-4 lg:gap-x-10 lg:grid-flow-row lg:text-justify text-center lg:max-w-2xl max-w-sm mt-14">
+        <div className="grid grid-cols-1 lg:space-y-2 space-y-4 lg:gap-x-10 lg:grid-flow-row text-center lg:max-w-2xl max-w-sm mt-14">
           {messages.map((message) =>
             message.content
               .split("\n")
@@ -113,7 +114,7 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
               .map((line, i) => (
                 <p
                   key={i}
-                  className="text-base font-bold text-transparent bg-clip-text bg-gradient-to-r from-c_grey to-neutral-400 italic"
+                  className="text-base font-bold text-transparent bg-clip-text bg-gradient-to-br from-c_grey to-c_green italic"
                 >
                   {line}
                 </p>
@@ -175,6 +176,7 @@ const ResultsShowcase = (props: ResultsShowcaseProps) => {
           <h4 className="italic lg:text-lg text-base">
             Looks good. Let&apos;s get you access to the playlist.
           </h4>
+          <FAQRedirectButton />
           {url ? <PostGenerationActions url={url} /> : <URLSubmitButton />}
         </form>
       )}
