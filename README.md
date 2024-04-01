@@ -1,6 +1,25 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Sound Scout
 
-## Getting Started
+#### What's this project about?
+
+- Sound Scout was a project I've work for a long time and improved a lot my web development knowledge.
+- The idea it's quite simple: A GPT wrapper that takes any prompt from the user, contextulizes it, asks for tracks related, and calls the Spotify API.
+
+#### Why it's not deployed?
+
+- The main reason why this project didn't make it to the end was due to Spotify's API use policies which states that the API interactions should not be made to train any type for ML model. Even though no data fetched from the API is not being sent to the OpenAI endpoint, they still consider it a violation of their policies.
+
+#### Can I deploy it?
+
+- Yes, but there's some caviats you need to be aware of. For the db services, I've opted for a serveless MySQL db called PlanetScale mostly for their amazing product and generous free plan. The following days, they're retiring their free plan so a possible migration and tweets to the db schema have to be done.
+- Also the enviroment variables related to OpenAI and Spotify API should be set up.
+
+#### Can I get a preview?
+
+- Yeah, you can access the login page at [https://sound-scout.vercel.app/auth/signin], scroll down and understand the project's flow.
+
+
+## Getting Started - Next.js
 
 First, run the development server:
 
