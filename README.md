@@ -3,7 +3,7 @@
 #### What's this project about?
 
 - Sound Scout was a project I've work for a long time and improved a lot my web development knowledge.
-- The idea it's quite simple: A GPT wrapper that takes any prompt from the user, contextulizes it, asks for tracks related, and calls the Spotify API.
+- The idea it's quite simple: A GPT wrapper that takes any prompt from the user, contextualizes it, asks for tracks related, and calls the Spotify API.
 
 #### Why it's not deployed?
 
